@@ -1,0 +1,151 @@
+<html lang="en">
+
+<head>
+    <title>Audio Player</title>
+    <HTA:APPLICATION ID="oHTA" APPLICATIONNAME="Audio Player" ICON="Ico's\AppIcon.ico" BORDER="Dialog" CAPTION="Yes" SCROLL="No"
+        SHOWINTASKBAR="Yes" SINGLEINSTANCE="No" SYSMENU="Yes" WINDOWSTATE="normal" MaximizeButton="No">
+</head>
+
+<script language="VBScript">
+' Resize the window
+Window.ResizeTo 392, 167 ' false x, true y
+
+'Create the Audio Player Object
+Dim oPlayer : Set oPlayer = CreateObject("WMPlayer.OCX")
+
+' Create the vars
+started = false
+isPlaying = false
+isLooping = 0
+pressedSpace = false
+pressedR = false
+startVolume = 100
+
+' Pause States
+StatePause = "Png's\PlayIcon.png"
+StatePlay = "Png's\PauseIcon.png"
+
+' Loop States
+StateNoLoop = "Png's\LoopIcon.png"
+StateOneLoop = "Png's\1LoopIcon.png"
+StateLoop = "Png's\InfLoopIcon.png"
+
+' is called when a song is chosen
+Sub StartUp
+    started = true
+    ' Play audio
+    oPlayer.URL = document.getElementById("mp3Selector").value
+    oPlayer.settings.volume = startVolume
+    ' ex. oPlayer.Controls.currentPosition = 0 ? test = oPlayer.Controls.currentPosition
+    'While oPlayer.playState <> 1 // 1 = Stopped
+
+    ' msgbox oPlayer.currentmedia.duration
+End Sub
+
+Sub mp3Selector_OnClick
+    started = false
+    oPlayer.controls.pause
+    isPlaying = false
+    isLooping = 0
+
+    document.getElementById("PauseImg").src = StatePause
+    document.getElementById("LoopImg").src = StateNoLoop
+End Sub
+
+' Called each time a key is pressed
+Sub document_OnKeyDown
+    If Window.event.keyCode = 32 Then TogglePause()
+    If Window.event.keyCode = 82 Then If started = true Then ToggleLoop()
+    If Window.event.keyCode = 37 Then If started = true Then MinusButton_OnClick()
+    If Window.event.keyCode = 39 Then If started = true Then PlusButton_OnClick()
+    If Window.event.keyCode = 38 Then If started = true Then VolumeUpButton_OnClick()
+    If Window.event.keyCode = 40 Then If started = true Then VolumeDownButton_OnClick()
+End Sub
+
+Sub TogglePause
+    If isPlaying = false Then If pressedSpace = false Then Play()
+    If isPlaying = true Then If pressedSpace = false Then Pause()
+    pressedSpace = false
+End Sub
+
+Sub PauseButton_OnClick
+    If started = true Then TogglePause()
+    If started = false Then If (document.getElementById("mp3Selector").value <> "") = true Then TogglePause()
+End Sub
+    
+Sub Play
+    If started = false Then StartUp()
+    document.getElementById("PauseImg").src = StatePlay
+    oPlayer.controls.play
+    isPlaying = true
+    pressedSpace = true
+End Sub
+
+Sub Pause
+    document.getElementById("PauseImg").src = StatePause
+    oPlayer.controls.pause
+    isPlaying = false
+    pressedSpace = true
+End Sub
+
+Sub MinusButton_OnClick
+    oPlayer.controls.currentPosition = oPlayer.controls.currentPosition - 5
+End Sub
+
+Sub PlusButton_OnClick
+    oPlayer.controls.currentPosition = oPlayer.controls.currentPosition + 5
+End Sub
+
+Sub VolumeDownButton_OnClick
+    oPlayer.settings.volume = oPlayer.settings.volume - 5
+End Sub
+
+Sub VolumeUpButton_OnClick
+    oPlayer.settings.volume = oPlayer.settings.volume + 5
+End Sub
+
+Sub LoopButton_OnClick
+    If started = true Then ToggleLoop()
+End Sub
+
+Sub ToggleLoop
+    If isLooping = 0 Then If pressedR = false Then setLoop(False) ' Create loop once mode
+    If isLooping = 1 Then If pressedR = false Then setLoop(True)
+    If isLooping = 2 Then If pressedR = false Then setLoop(False)
+    pressedR = false
+End Sub
+
+Sub setLoop(Bool)
+    oPlayer.settings.setMode "loop", Bool
+    isLooping = isLooping + 1
+    If isLooping = 3 Then isLooping = 0
+    pressedR = true
+    If isLooping = 0 Then document.getElementById("LoopImg").src = StateNoLoop
+    If isLooping = 1 Then document.getElementById("LoopImg").src = StateOneLoop
+    If isLooping = 2 Then document.getElementById("LoopImg").src = StateLoop
+End Sub
+
+Sub Foo
+End Sub
+
+</script>
+
+<body>
+    <input type="file" id="mp3Selector" name="mp3Selector" value="">
+
+    <br>
+
+    <!-- padding: top, sides, bottom -->
+    <button type="button" id="MinusButton" style="margin: 0px;" name="MinusButton">
+        <img src="Png's/-TimeIcon.png" height="32px" width="32px" /></button>
+    <button type="button" id="PauseButton" style="margin: 0px 6px 0px;" name="PauseButton">
+        <img id="PauseImg" src="Png's/PlayIcon.png" height="32px" width="32px" /></button>
+    <button type="button" id="PlusButton" style="margin: 0px;" name="PlusButton">
+        <img src="Png's\+TimeIcon.png" height="32px" width="32px" /></button>
+    <button type="button" id="VolumeDownButton" style="margin: 0px 6px 0px;" name="VolumeDownButton">
+        <img src="Png's\-VolumeIcon.png" height="32px" width="32px" /></button>
+    <button type="button" id="VolumeUpButton" style="margin: 0px;" name="VolumeUpButton">
+        <img src="Png's\+VolumeIcon.png" height="32px" width="32px" /></button>
+    <button type="button" id="LoopButton" style="margin: 0px 17px 0px;" name="LoopButton">
+        <img id="LoopImg" src="Png's\LoopIcon.png" height="32px" width="32px" /></button>
+</body>
