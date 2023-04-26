@@ -7,30 +7,30 @@
 </head>
 
 <script language="VBScript">
-    ' Resize the window
-    Window.ResizeTo 392, 167 ' false x, true y
+' Resize the window
+Window.ResizeTo 392, 167 ' false x, true y
 
-    'Create the Audio Player Object
+'Create the Audio Player Object
 Dim oPlayer: Set oPlayer = CreateObject("WMPlayer.OCX")
 
-    ' Create the vars
-    started = false
-    isPlaying = false
-    isLooping = 0
-    pressedSpace = false
-    pressedR = false
-    startVolume = 100
+' Create the vars
+started = false
+isPlaying = false
+isLooping = 0
+pressedSpace = false
+pressedR = false
+startVolume = 50
 
-    ' Pause States
-    StatePause = "Png's\PlayIcon.png"
-    StatePlay = "Png's\PauseIcon.png"
+' Pause States
+StatePause = "Png's\PlayIcon.png"
+StatePlay = "Png's\PauseIcon.png"
 
-    ' Loop States
-    StateNoLoop = "Png's\LoopIcon.png"
-    StateOneLoop = "Png's\1LoopIcon.png"
-    StateLoop = "Png's\InfLoopIcon.png"
+' Loop States
+StateNoLoop = "Png's\LoopIcon.png"
+StateOneLoop = "Png's\1LoopIcon.png"
+StateLoop = "Png's\InfLoopIcon.png"
 
-    ' is called when a song is chosen
+' is called when a song is chosen
 Sub StartUp
     started = true
     ' Play audio
@@ -52,7 +52,7 @@ Sub mp3Selector_OnClick
     document.getElementById("LoopImg").src = StateNoLoop
 End Sub
 
-    ' Called each time a key is pressed
+' Called each time a key is pressed
 Sub document_OnKeyDown
     If Window.event.keyCode = 32 Then TogglePause()
     If Window.event.keyCode = 82 Then If started = true Then ToggleLoop()
@@ -98,10 +98,12 @@ End Sub
 
 Sub VolumeDownButton_OnClick
     oPlayer.settings.volume = oPlayer.settings.volume - 5
+    startVolume = startVolume - 5
 End Sub
 
 Sub VolumeUpButton_OnClick
     oPlayer.settings.volume = oPlayer.settings.volume + 5
+    startVolume = startVolume + 5
 End Sub
 
 Sub LoopButton_OnClick
@@ -135,22 +137,16 @@ End Sub
 
     <br>
 
-    <!-- padding: top, sides, bottom -->
-    <button type="button" id="MinusButton" style="margin: 0px;" name="MinusButton" onclick="focus(Window)"
-        tabindex="-1">
+    <button type="button" id="MinusButton" style="margin: 0px;" name="MinusButton" onclick="focus(Window)" tabindex="-1">
         <img src="Png's/-TimeIcon.png" height="32px" width="32px" /></button>
-    <button type="button" id="PauseButton" style="margin: 0px 6px 0px;" name="PauseButton" onclick="focus(Window)"
-        tabindex="-1">
+    <button type="button" id="PauseButton" style="margin: 0px 6px 0px;" name="PauseButton" onclick="focus(Window)" tabindex="-1">
         <img id="PauseImg" src="Png's/PlayIcon.png" height="32px" width="32px" /></button>
     <button type="button" id="PlusButton" style="margin: 0px;" name="PlusButton" onclick="focus(Window)" tabindex="-1">
         <img src="Png's\+TimeIcon.png" height="32px" width="32px" /></button>
-    <button type="button" id="VolumeDownButton" style="margin: 0px 6px 0px;" name="VolumeDownButton"
-        onclick="focus(Window)" tabindex="-1">
+    <button type="button" id="VolumeDownButton" style="margin: 0px 6px 0px;" name="VolumeDownButton" onclick="focus(Window)" tabindex="-1">
         <img src="Png's\-VolumeIcon.png" height="32px" width="32px" /></button>
-    <button type="button" id="VolumeUpButton" style="margin: 0px;" name="VolumeUpButton" onclick="focus(Window)"
-        tabindex="-1">
+    <button type="button" id="VolumeUpButton" style="margin: 0px;" name="VolumeUpButton" onclick="focus(Window)" tabindex="-1">
         <img src="Png's\+VolumeIcon.png" height="32px" width="32px" /></button>
-    <button type="button" id="LoopButton" style="margin: 0px 17px 0px;" name="LoopButton" onclick="focus(Window)"
-        tabindex="-1">
+    <button type="button" id="LoopButton" style="margin: 0px 17px 0px;" name="LoopButton" onclick="focus(Window)" tabindex="-1">
         <img id="LoopImg" src="Png's\LoopIcon.png" height="32px" width="32px" /></button>
 </body>
