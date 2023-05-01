@@ -16,7 +16,7 @@ Dim oPlayer: Set oPlayer = CreateObject("WMPlayer.OCX")
 ' Create the vars
 started = false
 isPlaying = false
-isLooping = 0
+isLooping = false
 pressedSpace = false
 pressedR = false
 startVolume = 50
@@ -27,7 +27,6 @@ StatePlay = "Png's\PauseIcon.png"
 
 ' Loop States
 StateNoLoop = "Png's\LoopIcon.png"
-StateOneLoop = "Png's\1LoopIcon.png"
 StateLoop = "Png's\InfLoopIcon.png"
 
 ' is called when a song is chosen
@@ -46,7 +45,7 @@ Sub mp3Selector_OnClick
     started = false
     oPlayer.controls.pause
     isPlaying = false
-    isLooping = 0
+    isLooping = false
 
     document.getElementById("PauseImg").src = StatePause
     document.getElementById("LoopImg").src = StateNoLoop
@@ -111,20 +110,17 @@ Sub LoopButton_OnClick
 End Sub
 
 Sub ToggleLoop
-    If isLooping = 0 Then If pressedR = false Then setLoop(False) ' Create loop once mode
-    If isLooping = 1 Then If pressedR = false Then setLoop(True)
-    If isLooping = 2 Then If pressedR = false Then setLoop(False)
+    If isLooping = true Then If pressedR = false Then setLoop(False)
+    If isLooping = false Then If pressedR = false Then setLoop(True)
     pressedR = false
 End Sub
 
 Sub setLoop(Bool)
     oPlayer.settings.setMode "loop", Bool
-    isLooping = isLooping + 1
-    If isLooping = 3 Then isLooping = 0
     pressedR = true
-    If isLooping = 0 Then document.getElementById("LoopImg").src = StateNoLoop
-    If isLooping = 1 Then document.getElementById("LoopImg").src = StateOneLoop
-    If isLooping = 2 Then document.getElementById("LoopImg").src = StateLoop
+    If isLooping = true Then document.getElementById("LoopImg").src = StateNoLoop
+    If isLooping = false Then document.getElementById("LoopImg").src = StateLoop
+    isLooping = Bool
 End Sub
 
 Sub Foo
