@@ -53,6 +53,7 @@ End Sub
 
 ' Called each time a key is pressed
 Sub document_OnKeyDown
+    If Window.event.keyCode = 27 Then Window.close()
     If Window.event.keyCode = 32 Then TogglePause()
     If Window.event.keyCode = 82 Then If started = true Then ToggleLoop()
     If Window.event.keyCode = 37 Then If started = true Then MinusButton_OnClick()
