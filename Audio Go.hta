@@ -8,7 +8,7 @@
 
 <script language="VBScript">
 ' Resize the window
-Window.ResizeTo 392, 167 ' false x, true y
+Window.ResizeTo 392, 190 ' false x, true y
 
 'Create the Audio Player Object
 Dim oPlayer: Set oPlayer = CreateObject("WMPlayer.OCX")
@@ -21,13 +21,31 @@ pressedSpace = false
 pressedR = false
 startVolume = 50
 
+' Bindings
+ChangingKey = 0
+
+Key_close = 27
+    Key_close_show = "escape"
+Key_pause = 32
+    Key_pause_show = "space"
+Key_loop = 82
+    Key_loop_show = "r"
+Key_minus = 37
+    Key_minus_show = "arrow_left"
+Key_plus = 39
+    Key_plus_show = "arrow_right"
+Key_up = 38
+    Key_up_show = "arrow_up"
+Key_down = 40
+    Key_down_show = "arrow_down"
+
 ' Pause States
 StatePause = "Png's\PlayIcon.png"
 StatePlay = "Png's\PauseIcon.png"
 
 ' Loop States
-StateNoLoop = "Png's\LoopIcon.png"
-StateLoop = "Png's\InfLoopIcon.png"
+StateNoLoop = "Png's\NoLoopIcon.png"
+StateLoop = "Png's\LoopIcon.png"
 
 ' is called when a song is chosen
 Sub StartUp
@@ -53,14 +71,41 @@ End Sub
 
 ' Called each time a key is pressed
 Sub document_OnKeyDown
-    If Window.event.keyCode = 27 Then Window.close()
-    If Window.event.keyCode = 32 Then TogglePause()
-    If Window.event.keyCode = 82 Then If started = true Then ToggleLoop()
-    If Window.event.keyCode = 37 Then If started = true Then MinusButton_OnClick()
-    If Window.event.keyCode = 39 Then If started = true Then PlusButton_OnClick()
-    If Window.event.keyCode = 38 Then If started = true Then VolumeUpButton_OnClick()
-    If Window.event.keyCode = 40 Then If started = true Then VolumeDownButton_OnClick()
+    If Not ChangingKey = 0 Then
+        Select Case ChangingKey
+            Case 1
+                Key_close = rebind(Window.event.keyCode)
+            Case 2
+                Key_pause = rebind(Window.event.keyCode)
+            Case 3
+                Key_loop = rebind(Window.event.keyCode)
+            Case 4
+                Key_minus = rebind(Window.event.keyCode)
+            Case 5
+                Key_plus = rebind(Window.event.keyCode)
+            Case 6
+                Key_up = rebind(Window.event.keyCode)
+            Case 7
+                Key_down = rebind(Window.event.keyCode)
+            Case Else
+                msgbox "Error var: ChangingKey is not in range"
+        End Select
+    Else
+        If Window.event.keyCode = Key_close Then Window.close()
+        If Window.event.keyCode = Key_pause Then TogglePause()
+        If Window.event.keyCode = Key_loop Then If started = true Then ToggleLoop()
+        If Window.event.keyCode = Key_minus Then If started = true Then MinusButton_OnClick()
+        If Window.event.keyCode = Key_plus Then If started = true Then PlusButton_OnClick()
+        If Window.event.keyCode = Key_up Then If started = true Then VolumeUpButton_OnClick()
+        If Window.event.keyCode = Key_down Then If started = true Then VolumeDownButton_OnClick()
+    End If
 End Sub
+
+Function rebind(keyCode)
+
+    ChangingKey = 0
+    rebind = keyCode
+End Function
 
 Sub TogglePause
     If isPlaying = false Then If pressedSpace = false Then Play()
@@ -86,6 +131,10 @@ Sub Pause
     oPlayer.controls.pause
     isPlaying = false
     pressedSpace = true
+End Sub
+
+Sub RebindButton_OnClick
+    ChangingKey = 1
 End Sub
 
 Sub MinusButton_OnClick
@@ -130,10 +179,19 @@ End Sub
 </script>
 
 <body>
+    <!-- First Layer -->
+    <button type="button" id="RebindButton" style="height: 16px; width: 16px;" name="RebindButton" onclick="focus(Window)" tabindex="-1">
+        <img src="Png's/NoLoopIcon.png" height="16px" width="16px" style="object-fit: cover;"/>
+    </button>
+
+    <br>
+
+    <!-- Second Layer -->
     <input type="file" id="mp3Selector" name="mp3Selector" value="" onclick="focus(Window)" tabindex="-1">
 
     <br>
 
+    <!-- Third Layer -->
     <button type="button" id="MinusButton" style="margin: 0px;" name="MinusButton" onclick="focus(Window)" tabindex="-1">
         <img src="Png's/-TimeIcon.png" height="32px" width="32px" /></button>
     <button type="button" id="PauseButton" style="margin: 0px 6px 0px;" name="PauseButton" onclick="focus(Window)" tabindex="-1">
@@ -145,5 +203,5 @@ End Sub
     <button type="button" id="VolumeUpButton" style="margin: 0px;" name="VolumeUpButton" onclick="focus(Window)" tabindex="-1">
         <img src="Png's\+VolumeIcon.png" height="32px" width="32px" /></button>
     <button type="button" id="LoopButton" style="margin: 0px 17px 0px;" name="LoopButton" onclick="focus(Window)" tabindex="-1">
-        <img id="LoopImg" src="Png's\LoopIcon.png" height="32px" width="32px" /></button>
+        <img id="LoopImg" src="Png's\NoLoopIcon.png" height="32px" width="32px" /></button>
 </body>
