@@ -23,41 +23,76 @@
             If Not ChangingKey = 0 Then
                 Select Case ChangingKey
                     Case 1
-                        Key_close = rebind(Window.event.keyCode)
+                        Key_close = Window.event.keyCode
                     Case 2
-                        Key_pause = rebind(Window.event.keyCode)
+                        Key_pause = Window.event.keyCode
                     Case 3
-                        Key_loop = rebind(Window.event.keyCode)
+                        Key_loop = Window.event.keyCode
                     Case 4
-                        Key_minus = rebind(Window.event.keyCode)
+                        Key_minus = Window.event.keyCode
                     Case 5
-                        Key_plus = rebind(Window.event.keyCode)
+                        Key_plus = Window.event.keyCode
                     Case 6
-                        Key_up = rebind(Window.event.keyCode)
+                        Key_up = Window.event.keyCode
                     Case 7
-                        Key_down = rebind(Window.event.keyCode)
+                        Key_down = Window.event.keyCode
                     Case Else
                         msgbox "Error var: ChangingKey is not in range"
                 End Select
             End If
         End Sub
 
-        Function rebind(keyCode)
-            ' window.returnValue = {Key_close, Key_pause, Key_loop, Key_minus, Key_plus, Key_up, Key_down}
-            ' figure out arrays in vbs
-            window.returnValue = keyCode
+        Sub Window_OnUnload
+            Dim returnArr : returnArr = Array(Key_close, Key_pause, Key_loop, Key_minus, Key_plus, Key_up, Key_down)
+            window.returnValue = returnArr
             window.close()
-        End Function
+        End Sub
         
         ' window.returnValue = 1
         ' document.close()
 
-        Sub RebindEscapeButton_OnClick
+        Sub RebindCloseButton_OnClick
             ChangingKey = 1
+        End Sub
+
+        Sub RebindPauseButton_OnClick
+            ChangingKey = 2
+        End Sub
+
+        Sub RebindLoopButton_OnClick
+            ChangingKey = 3
+        End Sub
+
+        Sub RebindMinusButton_OnClick
+            ChangingKey = 4
+        End Sub
+
+        Sub RebindPlusButton_OnClick
+            ChangingKey = 5
+        End Sub
+
+        Sub RebindUpButton_OnClick
+            ChangingKey = 6
+        End Sub
+
+        Sub RebindDownButton_OnClick
+            ChangingKey = 7
         End Sub
         </script>
 
-    <button type="button" id="RebindEscapeButton" style="height: 24px; width: 24px;" name="RebindEscapeButton" onclick="focus(document)" tabindex="-1"></button>
+    <button type="button" id="RebindCloseButton" style="height: 24px; width: 24px;" name="RebindCloseButton" onclick="focus(document)" tabindex="-1"></button>
+    <br>
+    <button type="button" id="RebindPauseButton" style="height: 24px; width: 24px;" name="RebindPauseButton" onclick="focus(document)" tabindex="-1"></button>
+    <br>
+    <button type="button" id="RebindLoopButton" style="height: 24px; width: 24px;" name="RebindLoopButton" onclick="focus(document)" tabindex="-1"></button>
+    <br>
+    <button type="button" id="RebindMinusButton" style="height: 24px; width: 24px;" name="RebindMinusButton" onclick="focus(document)" tabindex="-1"></button>
+    <br>
+    <button type="button" id="RebindPlusButton" style="height: 24px; width: 24px;" name="RebindPlusButton" onclick="focus(document)" tabindex="-1"></button>
+    <br>
+    <button type="button" id="RebindUpButton" style="height: 24px; width: 24px;" name="RebindUpButton" onclick="focus(document)" tabindex="-1"></button>
+    <br>
+    <button type="button" id="RebindDownButton" style="height: 24px; width: 24px;" name="RebindDownButton" onclick="focus(document)" tabindex="-1"></button>
 </body>
 
 </html>

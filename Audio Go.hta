@@ -21,6 +21,11 @@ pressedSpace = false
 pressedR = false
 startVolume = 50
 
+// figure out split method to get the song name ex. C:\Users\foo\Desktop\bar.mp4 -> Users\foo\Desktop\bar.mp4 -> foo\Desktop\bar.mp4 -> Desktop\bar.mp4 -> bar.mp4 ~ bar
+' Song Path
+SongPath = ""
+SongName = ""
+
 ' Bindings
 ChangingKey = 0
 
@@ -141,7 +146,8 @@ Sub Pause
 End Sub
 
 Sub RebindButton_OnClick
-    msgbox Window.showModalDialog("Hta's\Rebind.hta", "", "dialogHeight: 200px; dialogWidth: 300px;")
+    Dim arr : arr = Window.showModalDialog("Hta's\Rebind.hta", "", "dialogHeight: 189px; dialogWidth: 300px;")
+    msgbox arr(0) & " " & arr(1) & " " & arr(2) & " " & arr(3) & " " & arr(4) & " " & arr(5) & " " & arr(6)
     ChangingKey = 1
 End Sub
 
