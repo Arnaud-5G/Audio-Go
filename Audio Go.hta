@@ -134,6 +134,7 @@ Sub Pause
 End Sub
 
 Sub RebindButton_OnClick
+    msgbox Window.showModalDialog("Hta's\Rebind.hta", "", "dialogHeight: 200px; dialogWidth: 300px;")
     ChangingKey = 1
 End Sub
 
@@ -180,9 +181,7 @@ End Sub
 
 <body>
     <!-- First Layer -->
-    <button type="button" id="RebindButton" style="height: 16px; width: 16px;" name="RebindButton" onclick="focus(Window)" tabindex="-1">
-        <img src="Png's/NoLoopIcon.png" height="16px" width="16px" style="object-fit: cover;"/>
-    </button>
+    <button type="button" id="RebindButton" style="height: 16px; width: 16px;" name="RebindButton" onclick="focus(Window)" tabindex="-1"></button>
 
     <br>
 

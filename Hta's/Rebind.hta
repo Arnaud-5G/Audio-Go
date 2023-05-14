@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Rebind</title>
+</head>
+
+<body>
+    <script language="VBScript">
+        ' Bindings
+        ChangingKey = 0
+
+        Key_close = 27
+        Key_pause = 32
+        Key_loop = 82
+        Key_minus = 37
+        Key_plus = 39
+        Key_up = 38
+        Key_down = 40
+
+        ' Called each time a key is pressed
+        Sub document_OnKeyDown
+            If Not ChangingKey = 0 Then
+                Select Case ChangingKey
+                    Case 1
+                        Key_close = rebind(Window.event.keyCode)
+                    Case 2
+                        Key_pause = rebind(Window.event.keyCode)
+                    Case 3
+                        Key_loop = rebind(Window.event.keyCode)
+                    Case 4
+                        Key_minus = rebind(Window.event.keyCode)
+                    Case 5
+                        Key_plus = rebind(Window.event.keyCode)
+                    Case 6
+                        Key_up = rebind(Window.event.keyCode)
+                    Case 7
+                        Key_down = rebind(Window.event.keyCode)
+                    Case Else
+                        msgbox "Error var: ChangingKey is not in range"
+                End Select
+            End If
+        End Sub
+
+        Function rebind(keyCode)
+            ' window.returnValue = {Key_close, Key_pause, Key_loop, Key_minus, Key_plus, Key_up, Key_down}
+            ' figure out arrays in vbs
+            window.returnValue = keyCode
+            window.close()
+        End Function
+        
+        ' window.returnValue = 1
+        ' document.close()
+
+        Sub RebindEscapeButton_OnClick
+            ChangingKey = 1
+        End Sub
+        </script>
+
+    <button type="button" id="RebindEscapeButton" style="height: 24px; width: 24px;" name="RebindEscapeButton" onclick="focus(document)" tabindex="-1"></button>
+</body>
+
+</html>
