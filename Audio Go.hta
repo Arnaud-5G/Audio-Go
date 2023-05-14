@@ -47,6 +47,13 @@ StatePlay = "Png's\PauseIcon.png"
 StateNoLoop = "Png's\NoLoopIcon.png"
 StateLoop = "Png's\LoopIcon.png"
 
+' Volume States
+StateMinusVolume = "Png's\-VolumeIcon.png"
+StateMinVolume = "Png's\-MinVolumeIcon.png"
+
+StatePlusVolume = "Png's\+VolumeIcon.png"
+StateMaxVolume = "Png's\+MaxVolumeIcon.png"
+
 ' is called when a song is chosen
 Sub StartUp
     started = true
@@ -147,11 +154,23 @@ Sub PlusButton_OnClick
 End Sub
 
 Sub VolumeDownButton_OnClick
+    If oPlayer.settings.volume < 6 Then
+        document.getElementById("DownImg").src = StateMinVolume
+    Else 
+        document.getElementById("UpImg").src = StatePlusVolume
+    End If
+
     oPlayer.settings.volume = oPlayer.settings.volume - 5
     startVolume = startVolume - 5
 End Sub
 
 Sub VolumeUpButton_OnClick
+    If oPlayer.settings.volume > 94 Then
+        document.getElementById("UpImg").src = StateMaxVolume
+    Else 
+        document.getElementById("DownImg").src = StateMinusVolume
+    End If
+
     oPlayer.settings.volume = oPlayer.settings.volume + 5
     startVolume = startVolume + 5
 End Sub
@@ -198,9 +217,9 @@ End Sub
     <button type="button" id="PlusButton" style="margin: 0px;" name="PlusButton" onclick="focus(Window)" tabindex="-1">
         <img src="Png's\+TimeIcon.png" height="32px" width="32px" /></button>
     <button type="button" id="VolumeDownButton" style="margin: 0px 6px 0px;" name="VolumeDownButton" onclick="focus(Window)" tabindex="-1">
-        <img src="Png's\-VolumeIcon.png" height="32px" width="32px" /></button>
+        <img id="DownImg" src="Png's\-VolumeIcon.png" height="32px" width="32px" /></button>
     <button type="button" id="VolumeUpButton" style="margin: 0px;" name="VolumeUpButton" onclick="focus(Window)" tabindex="-1">
-        <img src="Png's\+VolumeIcon.png" height="32px" width="32px" /></button>
+        <img id="UpImg" src="Png's\+VolumeIcon.png" height="32px" width="32px" /></button>
     <button type="button" id="LoopButton" style="margin: 0px 17px 0px;" name="LoopButton" onclick="focus(Window)" tabindex="-1">
         <img id="LoopImg" src="Png's\NoLoopIcon.png" height="32px" width="32px" /></button>
 </body>
