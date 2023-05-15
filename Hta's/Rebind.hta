@@ -24,18 +24,25 @@
                 Select Case ChangingKey
                     Case 1
                         Key_close = Window.event.keyCode
+                        document.getElementById("CloseSpan").innerHTML = Key_close
                     Case 2
                         Key_pause = Window.event.keyCode
+                        document.getElementById("PauseSpan").innerHTML = Key_pause
                     Case 3
                         Key_loop = Window.event.keyCode
+                        document.getElementById("LoopSpan").innerHTML = Key_loop
                     Case 4
                         Key_minus = Window.event.keyCode
+                        document.getElementById("MinusSpan").innerHTML = Key_minus
                     Case 5
                         Key_plus = Window.event.keyCode
+                        document.getElementById("PlusSpan").innerHTML = Key_plus
                     Case 6
                         Key_up = Window.event.keyCode
+                        document.getElementById("UpSpan").innerHTML = Key_up
                     Case 7
                         Key_down = Window.event.keyCode
+                        document.getElementById("DownSpan").innerHTML = Key_down
                     Case Else
                         msgbox "Error var: ChangingKey is not in range"
                 End Select
@@ -78,21 +85,40 @@
         Sub RebindDownButton_OnClick
             ChangingKey = 7
         End Sub
+
+        Sub DefaultButton_OnClick
+            Key_close = 27
+            Key_pause = 32
+            Key_loop = 82
+            Key_minus = 37
+            Key_plus = 39
+            Key_up = 38
+            Key_down = 40
+        End Sub
         </script>
 
     <button type="button" id="RebindCloseButton" style="height: 24px; width: 24px;" name="RebindCloseButton" onclick="focus(document)" tabindex="-1"></button>
+    Close | <span id="CloseSpan">27</span>
     <br>
     <button type="button" id="RebindPauseButton" style="height: 24px; width: 24px;" name="RebindPauseButton" onclick="focus(document)" tabindex="-1"></button>
+    Pause | <span id="PauseSpan">32</span>
     <br>
     <button type="button" id="RebindLoopButton" style="height: 24px; width: 24px;" name="RebindLoopButton" onclick="focus(document)" tabindex="-1"></button>
-    <br>
-    <button type="button" id="RebindMinusButton" style="height: 24px; width: 24px;" name="RebindMinusButton" onclick="focus(document)" tabindex="-1"></button>
+    Loop | <span id="LoopSpan">82</span>
     <br>
     <button type="button" id="RebindPlusButton" style="height: 24px; width: 24px;" name="RebindPlusButton" onclick="focus(document)" tabindex="-1"></button>
+    +5 sec | <span id="PlusSpan">37</span>
+    <br>
+    <button type="button" id="RebindMinusButton" style="height: 24px; width: 24px;" name="RebindMinusButton" onclick="focus(document)" tabindex="-1"></button>
+    -5 sec | <span id="MinusSpan">39</span>
     <br>
     <button type="button" id="RebindUpButton" style="height: 24px; width: 24px;" name="RebindUpButton" onclick="focus(document)" tabindex="-1"></button>
+    +Volume | <span id="UpSpan">38</span>
     <br>
     <button type="button" id="RebindDownButton" style="height: 24px; width: 24px;" name="RebindDownButton" onclick="focus(document)" tabindex="-1"></button>
+    -Volume | <span id="DownSpan">40</span>
+    <br>
+    <button type="button" id="DefaultButton" name="DefaultButton" onclick="focus(document)" tabindex="-1">Set Default</button>
 </body>
 
 </html>
