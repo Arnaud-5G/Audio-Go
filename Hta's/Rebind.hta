@@ -49,6 +49,62 @@
             End If
         End Sub
 
+        Function Read(Path, Var)
+            If Var = "*All" Then
+                Set FSO = CreateObject("Scripting.FileSystemObject")
+                Set File = FSO.OpenTextFile(Path, 1) ' 1 = reading, 2 = write, 8 = write at the end
+
+                allData = File.readall
+                File.Close
+                For Each ln In Split(allData, vbCrLf)
+                    output = output & ln & vbCrLf
+                Next
+
+                ' memory management (vbs does not have one for objects only vars have one)
+                Set File = Nothing
+                Set FSO = Nothing
+
+                ' return
+                Read = output
+            ElseIf Var = "All" Then
+                Set FSO = CreateObject("Scripting.FileSystemObject")
+                Set File = FSO.OpenTextFile(Path, 1) ' 1 = reading, 2 = write, 8 = write at the end
+
+                allData = File.readall
+                File.Close
+                For Each ln In Split(allData, vbCrLf)
+                    output = output & Split(ln, " ", 2)(1) & vbCrLf
+                Next
+
+                ' memory management (vbs does not have one for objects only vars have one)
+                Set File = Nothing
+                Set FSO = Nothing
+
+                ' return
+                Read = output
+            Else
+                Set FSO = CreateObject("Scripting.FileSystemObject")
+                Set File = FSO.OpenTextFile(Path, 1) ' 1 = reading, 2 = write, 8 = write at the end
+
+                allData = File.readall
+                File.Close
+                For Each ln In Split(allData, vbCrLf)
+                    VarName = Split(ln, " ", 2)(0)
+                    If VarName = Var Then
+                        output = Split(ln, " ", 2)(1)
+                        Exit For
+                    End If
+                Next
+
+                ' memory management (vbs does not have one for objects only vars have one)
+                Set File = Nothing
+                Set FSO = Nothing
+
+                ' return
+                Read = output
+            End If
+        End Function
+
         Sub Window_OnUnload
             Dim returnArr : returnArr = Array(Key_close, Key_pause, Key_loop, Key_minus, Key_plus, Key_up, Key_down)
             window.returnValue = returnArr
@@ -94,6 +150,13 @@
             Key_plus = 39
             Key_up = 38
             Key_down = 40
+            document.getElementById("CloseSpan").innerHTML = Key_close
+            document.getElementById("PauseSpan").innerHTML = Key_pause
+            document.getElementById("LoopSpan").innerHTML = Key_loop
+            document.getElementById("MinusSpan").innerHTML = Key_minus
+            document.getElementById("PlusSpan").innerHTML = Key_plus
+            document.getElementById("UpSpan").innerHTML = Key_up
+            document.getElementById("DownSpan").innerHTML = Key_down
         End Sub
         </script>
 
@@ -107,10 +170,10 @@
     Loop | <span id="LoopSpan">82</span>
     <br>
     <button type="button" id="RebindPlusButton" style="height: 24px; width: 24px;" name="RebindPlusButton" onclick="focus(document)" tabindex="-1"></button>
-    +5 sec | <span id="PlusSpan">37</span>
+    +5 sec | <span id="PlusSpan">39</span>
     <br>
     <button type="button" id="RebindMinusButton" style="height: 24px; width: 24px;" name="RebindMinusButton" onclick="focus(document)" tabindex="-1"></button>
-    -5 sec | <span id="MinusSpan">39</span>
+    -5 sec | <span id="MinusSpan">37</span>
     <br>
     <button type="button" id="RebindUpButton" style="height: 24px; width: 24px;" name="RebindUpButton" onclick="focus(document)" tabindex="-1"></button>
     +Volume | <span id="UpSpan">38</span>

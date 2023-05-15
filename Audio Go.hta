@@ -70,6 +70,62 @@ Sub StartUp
     document.getElementById("mp3Selector").value = SongName
 End Sub
 
+    Function Read(Path, Var)
+        If Var = "*All" Then
+            Set FSO = CreateObject("Scripting.FileSystemObject")
+            Set File = FSO.OpenTextFile(Path, 1) ' 1 = reading, 2 = write, 8 = write at the end
+
+            allData = File.readall
+            File.Close
+            For Each ln In Split(allData, vbCrLf)
+                output = output & ln & vbCrLf
+            Next
+
+            ' memory management (vbs does not have one for objects only vars have one)
+            Set File = Nothing
+            Set FSO = Nothing
+
+            ' return
+            Read = output
+        ElseIf Var = "All" Then
+            Set FSO = CreateObject("Scripting.FileSystemObject")
+            Set File = FSO.OpenTextFile(Path, 1) ' 1 = reading, 2 = write, 8 = write at the end
+
+            allData = File.readall
+            File.Close
+            For Each ln In Split(allData, vbCrLf)
+                output = output & Split(ln, " ", 2)(1) & vbCrLf
+            Next
+
+            ' memory management (vbs does not have one for objects only vars have one)
+            Set File = Nothing
+            Set FSO = Nothing
+
+            ' return
+            Read = output
+        Else
+            Set FSO = CreateObject("Scripting.FileSystemObject")
+            Set File = FSO.OpenTextFile(Path, 1) ' 1 = reading, 2 = write, 8 = write at the end
+
+            allData = File.readall
+            File.Close
+            For Each ln In Split(allData, vbCrLf)
+                VarName = Split(ln, " ", 2)(0)
+                If VarName = Var Then
+                    output = Split(ln, " ", 2)(1)
+                    Exit For
+                End If
+            Next
+
+            ' memory management (vbs does not have one for objects only vars have one)
+            Set File = Nothing
+            Set FSO = Nothing
+
+            ' return
+            Read = output
+        End If
+    End Function
+
 Sub mp3Selector_OnClick
     started = false
     oPlayer.controls.pause
