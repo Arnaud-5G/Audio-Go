@@ -1,8 +1,8 @@
 <html lang="en">
-
+    
 <head>
     <title>Audio Go</title>
-    <HTA:APPLICATION ID="oHTA" APPLICATIONNAME="Audio Go" ICON="Ico's\AppIcon.ico" BORDER="Dialog" CAPTION="Yes"
+    <HTA:APPLICATION ID="oHTA" APPLICATIONNAME="Audio Go" ICON="ico\AppIcon.ico" BORDER="Dialog" CAPTION="Yes"
         SCROLL="No" SHOWINTASKBAR="Yes" SINGLEINSTANCE="No" SYSMENU="Yes" WINDOWSTATE="normal" MaximizeButton="No">
 </head>
 
@@ -21,33 +21,29 @@ pressedSpace = false
 pressedR = false
 startVolume = 50
 
-' Song Path
-SongPath = ""
-SongName = ""
-
 ' Bindings
-Key_close = 27
-Key_pause = 32
-Key_loop = 82
-Key_minus = 37
-Key_plus = 39
-Key_up = 38
-Key_down = 40
+Key_close = Read("C:\Users\20200791\Desktop\Repos\Audio-Go\dat\Bindings.dat", "close")
+Key_pause = Read("C:\Users\20200791\Desktop\Repos\Audio-Go\dat\Bindings.dat", "pause")
+Key_loop = Read("C:\Users\20200791\Desktop\Repos\Audio-Go\dat\Bindings.dat", "loop")
+Key_minus = Read("C:\Users\20200791\Desktop\Repos\Audio-Go\dat\Bindings.dat", "minus")
+Key_plus = Read("C:\Users\20200791\Desktop\Repos\Audio-Go\dat\Bindings.dat", "plus")
+Key_up = Read("C:\Users\20200791\Desktop\Repos\Audio-Go\dat\Bindings.dat", "up")
+Key_down = Read("C:\Users\20200791\Desktop\Repos\Audio-Go\dat\Bindings.dat", "down")
 
 ' Pause States
-StatePause = "Png's\PlayIcon.png"
-StatePlay = "Png's\PauseIcon.png"
+StatePause = "png\PlayIcon.png"
+StatePlay = "png\PauseIcon.png"
 
 ' Loop States
-StateNoLoop = "Png's\NoLoopIcon.png"
-StateLoop = "Png's\LoopIcon.png"
+StateNoLoop = "png\NoLoopIcon.png"
+StateLoop = "png\LoopIcon.png"
 
 ' Volume States
-StateMinusVolume = "Png's\-VolumeIcon.png"
-StateMinVolume = "Png's\-MinVolumeIcon.png"
+StateMinusVolume = "png\-VolumeIcon.png"
+StateMinVolume = "png\-MinVolumeIcon.png"
 
-StatePlusVolume = "Png's\+VolumeIcon.png"
-StateMaxVolume = "Png's\+MaxVolumeIcon.png"
+StatePlusVolume = "png\+VolumeIcon.png"
+StateMaxVolume = "png\+MaxVolumeIcon.png"
 
 ' is called when a song is chosen
 Sub StartUp
@@ -126,7 +122,56 @@ End Sub
         End If
     End Function
 
-Sub mp3Selector_OnClick
+    Function Write(Path, Var, Text)
+        Set FSO = CreateObject("Scripting.FileSystemObject")
+        Set File = FSO.OpenTextFile(Path, 1) ' 1 = reading, 2 = write, 8 = write at the end
+        PathOver = Split(Path, "\")
+        i = -1
+        For each x in PathOver
+            i = i+1
+        Next
+        
+        PathOverwrite = ""
+        y = -1
+
+        For each x in PathOver
+            y = y+1
+            If Not y = i Then
+                PathOverwrite = PathOverwrite & x & "\"
+            Else
+                PathOverwrite = PathOverwrite & "temp.dat"
+            End If
+        Next
+
+        Set FileOver = FSO.CreateTextFile(PathOverwrite, 2) ' 1 = reading, 2 = write, 8 = write at the end
+        
+        Do While Not File.AtEndofStream
+            ln = File.ReadLine
+            VarName = Split(ln, " ", 2)(0)
+            If VarName = Var Then
+                FileOver.WriteLine Var & " " & Text
+            Else
+                FileOver.WriteLine ln
+            End If
+        Loop
+
+        File.Close
+        FileOver.Close
+
+        Set FileOver = FSO.OpenTextFile(PathOverwrite, 1)
+        Set File = FSO.OpenTextFile(Path, 2)
+
+        File.Write ""
+        text = FileOver.ReadAll
+        File.Write text
+        File.Close
+        FileOver.Close
+
+        FSO.DeleteFile(PathOverwrite)
+
+    End Function
+
+    Sub mp3Selector_OnClick
     started = false
     oPlayer.controls.pause
     isPlaying = false
@@ -146,11 +191,6 @@ Sub document_OnKeyDown
     If Window.event.keyCode = Key_up Then If started = true Then VolumeUpButton_OnClick()
     If Window.event.keyCode = Key_down Then If started = true Then VolumeDownButton_OnClick()
 End Sub
-
-Function rebind(keyCode)
-    ChangingKey = 0
-    rebind = keyCode
-End Function
 
 Sub TogglePause
     If isPlaying = false Then If pressedSpace = false Then Play()
@@ -179,13 +219,20 @@ Sub Pause
 End Sub
 
 Sub RebindButton_OnClick
-    Dim arr : arr = Window.showModalDialog("Hta's\Rebind.hta", "", "dialogHeight: 228px; dialogWidth: 300px;")
+    Dim arr : arr = Window.showModalDialog("hta\Rebind.hta", "", "dialogHeight: 228px; dialogWidth: 300px;")
+    Write "C:\Users\20200791\Desktop\Repos\Audio-Go\dat\Bindings.dat", "close", arr(0)
     Key_close = arr(0)
+    Write "C:\Users\20200791\Desktop\Repos\Audio-Go\dat\Bindings.dat", "pause", arr(1)
     Key_pause = arr(1)
+    Write "C:\Users\20200791\Desktop\Repos\Audio-Go\dat\Bindings.dat", "loop", arr(2)
     Key_loop = arr(2)
+    Write "C:\Users\20200791\Desktop\Repos\Audio-Go\dat\Bindings.dat", "minus", arr(3)
     Key_minus = arr(3)
+    Write "C:\Users\20200791\Desktop\Repos\Audio-Go\dat\Bindings.dat", "plus", arr(4)
     Key_plus = arr(4)
+    Write "C:\Users\20200791\Desktop\Repos\Audio-Go\dat\Bindings.dat", "up", arr(5)
     Key_up = arr(5)
+    Write "C:\Users\20200791\Desktop\Repos\Audio-Go\dat\Bindings.dat", "down", arr(6)
     Key_down = arr(6)
 End Sub
 
@@ -255,15 +302,15 @@ End Sub
 
     <!-- Third Layer -->
     <button type="button" id="MinusButton" style="margin: 0px;" name="MinusButton" onclick="focus(Window)" tabindex="-1">
-        <img src="Png's/-TimeIcon.png" height="32px" width="32px" /></button>
+        <img src="png/-TimeIcon.png" height="32px" width="32px" /></button>
     <button type="button" id="PauseButton" style="margin: 0px 6px 0px;" name="PauseButton" onclick="focus(Window)" tabindex="-1">
-        <img id="PauseImg" src="Png's/PlayIcon.png" height="32px" width="32px" /></button>
+        <img id="PauseImg" src="png/PlayIcon.png" height="32px" width="32px" /></button>
     <button type="button" id="PlusButton" style="margin: 0px;" name="PlusButton" onclick="focus(Window)" tabindex="-1">
-        <img src="Png's\+TimeIcon.png" height="32px" width="32px" /></button>
+        <img src="png\+TimeIcon.png" height="32px" width="32px" /></button>
     <button type="button" id="VolumeDownButton" style="margin: 0px 6px 0px;" name="VolumeDownButton" onclick="focus(Window)" tabindex="-1">
-        <img id="DownImg" src="Png's\-VolumeIcon.png" height="32px" width="32px" /></button>
+        <img id="DownImg" src="png\-VolumeIcon.png" height="32px" width="32px" /></button>
     <button type="button" id="VolumeUpButton" style="margin: 0px;" name="VolumeUpButton" onclick="focus(Window)" tabindex="-1">
-        <img id="UpImg" src="Png's\+VolumeIcon.png" height="32px" width="32px" /></button>
+        <img id="UpImg" src="png\+VolumeIcon.png" height="32px" width="32px" /></button>
     <button type="button" id="LoopButton" style="margin: 0px 17px 0px;" name="LoopButton" onclick="focus(Window)" tabindex="-1">
-        <img id="LoopImg" src="Png's\NoLoopIcon.png" height="32px" width="32px" /></button>
+        <img id="LoopImg" src="png\NoLoopIcon.png" height="32px" width="32px" /></button>
 </body>
