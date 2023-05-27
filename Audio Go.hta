@@ -7,65 +7,66 @@
 </head>
 
 <script language="VBScript">
-' Resize the window
-Window.ResizeTo 392, 190 ' false x, true y
+    ' Resize the window
+    Window.ResizeTo 392, 190 ' false x, true y
 
-'Create the Audio Player Object
-Dim oPlayer: Set oPlayer = CreateObject("WMPlayer.OCX")
+    'Create the Audio Player Object
+    Dim oPlayer: Set oPlayer = CreateObject("WMPlayer.OCX")
 
-' Create the vars
-started = false
-isPlaying = false
-isLooping = false
-pressedSpace = false
-pressedR = false
-startVolume = 50
+    ' Create the vars
+    started = false
+    isPlaying = false
+    isLooping = false
+    pressedSpace = false
+    pressedR = false
+    startVolume = 50
 
-' Bindings
-Key_close = Read("C:\Users\20200791\Desktop\Repos\Audio-Go\dat\Bindings.dat", "close")
-Key_pause = Read("C:\Users\20200791\Desktop\Repos\Audio-Go\dat\Bindings.dat", "pause")
-Key_loop = Read("C:\Users\20200791\Desktop\Repos\Audio-Go\dat\Bindings.dat", "loop")
-Key_minus = Read("C:\Users\20200791\Desktop\Repos\Audio-Go\dat\Bindings.dat", "minus")
-Key_plus = Read("C:\Users\20200791\Desktop\Repos\Audio-Go\dat\Bindings.dat", "plus")
-Key_up = Read("C:\Users\20200791\Desktop\Repos\Audio-Go\dat\Bindings.dat", "up")
-Key_down = Read("C:\Users\20200791\Desktop\Repos\Audio-Go\dat\Bindings.dat", "down")
+    ' Bindings
+    Key_close = Read("C:\Users\20200791\Desktop\Repos\Audio-Go\dat\Bindings.dat", "close")
+    Key_pause = Read("C:\Users\20200791\Desktop\Repos\Audio-Go\dat\Bindings.dat", "pause")
+    Key_loop = Read("C:\Users\20200791\Desktop\Repos\Audio-Go\dat\Bindings.dat", "loop")
+    Key_minus = Read("C:\Users\20200791\Desktop\Repos\Audio-Go\dat\Bindings.dat", "minus")
+    Key_plus = Read("C:\Users\20200791\Desktop\Repos\Audio-Go\dat\Bindings.dat", "plus")
+    Key_up = Read("C:\Users\20200791\Desktop\Repos\Audio-Go\dat\Bindings.dat", "up")
+    Key_down = Read("C:\Users\20200791\Desktop\Repos\Audio-Go\dat\Bindings.dat", "down")
 
-' Pause States
-StatePause = "png\PlayIcon.png"
-StatePlay = "png\PauseIcon.png"
+    ' Pause States
+    StatePause = "png\PlayIcon.png"
+    StatePlay = "png\PauseIcon.png"
 
-' Loop States
-StateNoLoop = "png\NoLoopIcon.png"
-StateLoop = "png\LoopIcon.png"
+    ' Loop States
+    StateNoLoop = "png\NoLoopIcon.png"
+    StateLoop = "png\LoopIcon.png"
 
-' Volume States
-StateMinusVolume = "png\-VolumeIcon.png"
-StateMinVolume = "png\-MinVolumeIcon.png"
+    ' Volume States
+    StateMinusVolume = "png\-VolumeIcon.png"
+    StateMinVolume = "png\-MinVolumeIcon.png"
 
-StatePlusVolume = "png\+VolumeIcon.png"
-StateMaxVolume = "png\+MaxVolumeIcon.png"
+    StatePlusVolume = "png\+VolumeIcon.png"
+    StateMaxVolume = "png\+MaxVolumeIcon.png"
 
-' is called when a song is chosen
-Sub StartUp
-    SongPath = document.getElementById("mp3Selector").value
-    started = true
-    ' Play audio
-    oPlayer.URL = SongPath
-    oPlayer.settings.volume = startVolume
+    ' is called when a song is chosen
+    Sub StartUp
+        SongPath = document.getElementById("mp3Selector").value
+        started = true
+        ' Play audio
+        oPlayer.URL = SongPath
+        oPlayer.settings.volume = startVolume
 
-    ' ex. oPlayer.Controls.currentPosition = 0 ? test = oPlayer.Controls.currentPosition
-    ' msgbox oPlayer.currentmedia.duration
+        ' ex. oPlayer.Controls.currentPosition = 0 ? test = oPlayer.Controls.currentPosition
+        ' msgbox oPlayer.currentmedia.duration
 
-    a = Split(SongPath, "\", -1)
-    i = -1
-    for each x in a
-        i = i + 1
-    next
-    b = Split(a(i), ".", 1, 0)
-    SongName = Split(b(0), ".")(0)
-    document.getElementById("mp3Selector").value = SongName
-End Sub
+        a = Split(SongPath, "\", -1)
+        i = -1
+        for each x in a
+            i = i + 1
+        next
+        b = Split(a(i), ".", 1, 0)
+        SongName = Split(b(0), ".")(0)
+        document.getElementById("mp3Selector").value = SongName
+    End Sub
 
+    ' to read in memory
     Function Read(Path, Var)
         If Var = "*All" Then
             Set FSO = CreateObject("Scripting.FileSystemObject")
@@ -82,8 +83,8 @@ End Sub
             Set FSO = Nothing
 
             ' return
-            Read = output
-        ElseIf Var = "All" Then
+            Read = CInt(output)
+        ElseIf Var = "*AllData" Then
             Set FSO = CreateObject("Scripting.FileSystemObject")
             Set File = FSO.OpenTextFile(Path, 1) ' 1 = reading, 2 = write, 8 = write at the end
 
@@ -98,7 +99,7 @@ End Sub
             Set FSO = Nothing
 
             ' return
-            Read = output
+            Read = CInt(output)
         Else
             Set FSO = CreateObject("Scripting.FileSystemObject")
             Set File = FSO.OpenTextFile(Path, 1) ' 1 = reading, 2 = write, 8 = write at the end
@@ -118,10 +119,11 @@ End Sub
             Set FSO = Nothing
 
             ' return
-            Read = output
+            Read = CInt(output)
         End If
     End Function
 
+    ' to write in memory
     Function Write(Path, Var, Text)
         Set FSO = CreateObject("Scripting.FileSystemObject")
         Set File = FSO.OpenTextFile(Path, 1) ' 1 = reading, 2 = write, 8 = write at the end
@@ -172,120 +174,121 @@ End Sub
     End Function
 
     Sub mp3Selector_OnClick
-    started = false
-    oPlayer.controls.pause
-    isPlaying = false
-    isLooping = false
+        started = false
+        oPlayer.controls.pause
+        isPlaying = false
+        isLooping = false
 
-    document.getElementById("PauseImg").src = StatePause
-    document.getElementById("LoopImg").src = StateNoLoop
-End Sub
+        document.getElementById("PauseImg").src = StatePause
+        document.getElementById("LoopImg").src = StateNoLoop
+    End Sub
 
-' Called each time a key is pressed
-Sub document_OnKeyDown
-    If Window.event.keyCode = Key_close Then Window.close()
-    If Window.event.keyCode = Key_pause Then TogglePause()
-    If Window.event.keyCode = Key_loop Then If started = true Then ToggleLoop()
-    If Window.event.keyCode = Key_minus Then If started = true Then MinusButton_OnClick()
-    If Window.event.keyCode = Key_plus Then If started = true Then PlusButton_OnClick()
-    If Window.event.keyCode = Key_up Then If started = true Then VolumeUpButton_OnClick()
-    If Window.event.keyCode = Key_down Then If started = true Then VolumeDownButton_OnClick()
-End Sub
+    ' Called each time a key is pressed
+    Sub document_OnKeyDown
+        lnum = Window.event.keyCode
+        If Window.event.keyCode = Key_close Then Window.close()
+        If Window.event.keyCode = Key_pause Then TogglePause()
+        If Window.event.keyCode = Key_loop Then If started = true Then ToggleLoop()
+        If Window.event.keyCode = Key_minus Then If started = true Then MinusButton_OnClick()
+        If Window.event.keyCode = Key_plus Then If started = true Then PlusButton_OnClick()
+        If Window.event.keyCode = Key_up Then If started = true Then VolumeUpButton_OnClick()
+        If Window.event.keyCode = Key_down Then If started = true Then VolumeDownButton_OnClick()
+    End Sub
 
-Sub TogglePause
-    If isPlaying = false Then If pressedSpace = false Then Play()
-    If isPlaying = true Then If pressedSpace = false Then Pause()
-    pressedSpace = false
-End Sub
+    Sub TogglePause
+        If isPlaying = false Then If pressedSpace = false Then Play()
+        If isPlaying = true Then If pressedSpace = false Then Pause()
+        pressedSpace = false
+    End Sub
 
-Sub PauseButton_OnClick
-    If started = true Then TogglePause()
-    If started = false Then If(document.getElementById("mp3Selector").value <> "") = true Then TogglePause()
-End Sub
+    Sub PauseButton_OnClick
+        If started = true Then TogglePause()
+        If started = false Then If(document.getElementById("mp3Selector").value <> "") = true Then TogglePause()
+    End Sub
     
-Sub Play
-    If started = false Then StartUp()
-    document.getElementById("PauseImg").src = StatePlay
-    oPlayer.controls.play
-    isPlaying = true
-    pressedSpace = true
-End Sub
+    Sub Play
+        If started = false Then StartUp()
+        document.getElementById("PauseImg").src = StatePlay
+        oPlayer.controls.play
+        isPlaying = true
+        pressedSpace = true
+    End Sub
 
-Sub Pause
-    document.getElementById("PauseImg").src = StatePause
-    oPlayer.controls.pause
-    isPlaying = false
-    pressedSpace = true
-End Sub
+    Sub Pause
+        document.getElementById("PauseImg").src = StatePause
+        oPlayer.controls.pause
+        isPlaying = false
+        pressedSpace = true
+    End Sub
 
-Sub RebindButton_OnClick
-    Dim arr : arr = Window.showModalDialog("hta\Rebind.hta", "", "dialogHeight: 228px; dialogWidth: 300px;")
-    Write "C:\Users\20200791\Desktop\Repos\Audio-Go\dat\Bindings.dat", "close", arr(0)
-    Key_close = arr(0)
-    Write "C:\Users\20200791\Desktop\Repos\Audio-Go\dat\Bindings.dat", "pause", arr(1)
-    Key_pause = arr(1)
-    Write "C:\Users\20200791\Desktop\Repos\Audio-Go\dat\Bindings.dat", "loop", arr(2)
-    Key_loop = arr(2)
-    Write "C:\Users\20200791\Desktop\Repos\Audio-Go\dat\Bindings.dat", "minus", arr(3)
-    Key_minus = arr(3)
-    Write "C:\Users\20200791\Desktop\Repos\Audio-Go\dat\Bindings.dat", "plus", arr(4)
-    Key_plus = arr(4)
-    Write "C:\Users\20200791\Desktop\Repos\Audio-Go\dat\Bindings.dat", "up", arr(5)
-    Key_up = arr(5)
-    Write "C:\Users\20200791\Desktop\Repos\Audio-Go\dat\Bindings.dat", "down", arr(6)
-    Key_down = arr(6)
-End Sub
+    Sub RebindButton_OnClick
+        Dim arr : arr = Window.showModalDialog("hta\Rebind.hta", "", "dialogHeight: 228px; dialogWidth: 300px;")
+        Write "C:\Users\20200791\Desktop\Repos\Audio-Go\dat\Bindings.dat", "close", arr(0)
+        Key_close = arr(0)
+        Write "C:\Users\20200791\Desktop\Repos\Audio-Go\dat\Bindings.dat", "pause", arr(1)
+        Key_pause = arr(1)
+        Write "C:\Users\20200791\Desktop\Repos\Audio-Go\dat\Bindings.dat", "loop", arr(2)
+        Key_loop = arr(2)
+        Write "C:\Users\20200791\Desktop\Repos\Audio-Go\dat\Bindings.dat", "minus", arr(3)
+        Key_minus = arr(3)
+        Write "C:\Users\20200791\Desktop\Repos\Audio-Go\dat\Bindings.dat", "plus", arr(4)
+        Key_plus = arr(4)
+        Write "C:\Users\20200791\Desktop\Repos\Audio-Go\dat\Bindings.dat", "up", arr(5)
+        Key_up = arr(5)
+        Write "C:\Users\20200791\Desktop\Repos\Audio-Go\dat\Bindings.dat", "down", arr(6)
+        Key_down = arr(6)
+    End Sub
 
-Sub MinusButton_OnClick
-    oPlayer.controls.currentPosition = oPlayer.controls.currentPosition - 5
-End Sub
+    Sub MinusButton_OnClick
+        oPlayer.controls.currentPosition = oPlayer.controls.currentPosition - 5
+    End Sub
 
-Sub PlusButton_OnClick
-    oPlayer.controls.currentPosition = oPlayer.controls.currentPosition + 5
-End Sub
+    Sub PlusButton_OnClick
+        oPlayer.controls.currentPosition = oPlayer.controls.currentPosition + 5
+    End Sub
 
-Sub VolumeDownButton_OnClick
-    If oPlayer.settings.volume < 6 Then
-        document.getElementById("DownImg").src = StateMinVolume
-    Else 
-        document.getElementById("UpImg").src = StatePlusVolume
-    End If
+    Sub VolumeDownButton_OnClick
+        If oPlayer.settings.volume < 6 Then
+            document.getElementById("DownImg").src = StateMinVolume
+        Else 
+            document.getElementById("UpImg").src = StatePlusVolume
+        End If
 
-    oPlayer.settings.volume = oPlayer.settings.volume - 5
-    startVolume = startVolume - 5
-End Sub
+        oPlayer.settings.volume = oPlayer.settings.volume - 5
+        startVolume = startVolume - 5
+    End Sub
 
-Sub VolumeUpButton_OnClick
-    If oPlayer.settings.volume > 94 Then
-        document.getElementById("UpImg").src = StateMaxVolume
-    Else 
-        document.getElementById("DownImg").src = StateMinusVolume
-    End If
+    Sub VolumeUpButton_OnClick
+        If oPlayer.settings.volume > 94 Then
+            document.getElementById("UpImg").src = StateMaxVolume
+        Else 
+            document.getElementById("DownImg").src = StateMinusVolume
+        End If
 
-    oPlayer.settings.volume = oPlayer.settings.volume + 5
-    startVolume = startVolume + 5
-End Sub
+        oPlayer.settings.volume = oPlayer.settings.volume + 5
+        startVolume = startVolume + 5
+    End Sub
 
-Sub LoopButton_OnClick
-    If started = true Then ToggleLoop()
-End Sub
+    Sub LoopButton_OnClick
+        If started = true Then ToggleLoop()
+    End Sub
 
-Sub ToggleLoop
-    If isLooping = true Then If pressedR = false Then setLoop(False)
-    If isLooping = false Then If pressedR = false Then setLoop(True)
-    pressedR = false
-End Sub
+    Sub ToggleLoop
+        If isLooping = true Then If pressedR = false Then setLoop(False)
+        If isLooping = false Then If pressedR = false Then setLoop(True)
+        pressedR = false
+    End Sub
 
-Sub setLoop(Bool)
-    oPlayer.settings.setMode "loop", Bool
-    pressedR = true
-    If isLooping = true Then document.getElementById("LoopImg").src = StateNoLoop
-    If isLooping = false Then document.getElementById("LoopImg").src = StateLoop
-    isLooping = Bool
-End Sub
+    Sub setLoop(Bool)
+        oPlayer.settings.setMode "loop", Bool
+        pressedR = true
+        If isLooping = true Then document.getElementById("LoopImg").src = StateNoLoop
+        If isLooping = false Then document.getElementById("LoopImg").src = StateLoop
+        isLooping = Bool
+    End Sub
 
-Sub Foo
-End Sub
+    Sub Foo
+    End Sub
 
 </script>
 
