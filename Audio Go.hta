@@ -68,73 +68,25 @@
 
     ' to read in memory
     Function Read(Path, Var)
-        ' If Mid(Var, 1) = "*" Then
-        '     command = Split(Var, "*", 2)(1)
-        '     If Mid(command, 1, 4) = "Line" Then command = "Line"
+        Set FSO = CreateObject("Scripting.FileSystemObject")
+        Set File = FSO.OpenTextFile(Path, 1) ' 1 = reading, 2 = write, 8 = write at the end
 
-        '     Select Case command
-        '         Case "All"
+        allData = File.readall
+        File.Close
+        For Each ln In Split(allData, vbCrLf)
+            VarName = Split(ln, " ", 2)(0)
+            If VarName = Var Then
+                output = Split(ln, " ", 2)(1)
+                Exit For
+            End If
+        Next
 
-        '         Case "AllData"
-                
-        '         Case "Line"
-            
-        '     End Select
-        ' End If
+        ' memory management (vbs does not have one for objects only vars have one)
+        Set File = Nothing
+        Set FSO = Nothing
 
-        If Var = "*All" Then
-            Set FSO = CreateObject("Scripting.FileSystemObject")
-            Set File = FSO.OpenTextFile(Path, 1) ' 1 = reading, 2 = write, 8 = write at the end
-
-            allData = File.readall
-            File.Close
-            For Each ln In Split(allData, vbCrLf)
-                output = output & ln & vbCrLf
-            Next
-
-            ' memory management (vbs does not have one for objects only vars have one)
-            Set File = Nothing
-            Set FSO = Nothing
-
-            ' return
-            Read = CInt(output)
-        ElseIf Var = "*AllData" Then
-            Set FSO = CreateObject("Scripting.FileSystemObject")
-            Set File = FSO.OpenTextFile(Path, 1) ' 1 = reading, 2 = write, 8 = write at the end
-
-            allData = File.readall
-            File.Close
-            For Each ln In Split(allData, vbCrLf)
-                output = output & Split(ln, " ", 2)(1) & vbCrLf
-            Next
-
-            ' memory management (vbs does not have one for objects only vars have one)
-            Set File = Nothing
-            Set FSO = Nothing
-
-            ' return
-            Read = CInt(output)
-        Else
-            Set FSO = CreateObject("Scripting.FileSystemObject")
-            Set File = FSO.OpenTextFile(Path, 1) ' 1 = reading, 2 = write, 8 = write at the end
-
-            allData = File.readall
-            File.Close
-            For Each ln In Split(allData, vbCrLf)
-                VarName = Split(ln, " ", 2)(0)
-                If VarName = Var Then
-                    output = Split(ln, " ", 2)(1)
-                    Exit For
-                End If
-            Next
-
-            ' memory management (vbs does not have one for objects only vars have one)
-            Set File = Nothing
-            Set FSO = Nothing
-
-            ' return
-            Read = CInt(output)
-        End If
+        ' return
+        Read = CInt(output)
     End Function
 
     ' to write in memory
@@ -184,7 +136,6 @@
         FileOver.Close
 
         FSO.DeleteFile(PathOverwrite)
-
     End Function
 
     Sub mp3Selector_OnClick
