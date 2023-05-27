@@ -68,6 +68,20 @@
 
     ' to read in memory
     Function Read(Path, Var)
+        ' If Mid(Var, 1) = "*" Then
+        '     command = Split(Var, "*", 2)(1)
+        '     If Mid(command, 1, 4) = "Line" Then command = "Line"
+
+        '     Select Case command
+        '         Case "All"
+
+        '         Case "AllData"
+                
+        '         Case "Line"
+            
+        '     End Select
+        ' End If
+
         If Var = "*All" Then
             Set FSO = CreateObject("Scripting.FileSystemObject")
             Set File = FSO.OpenTextFile(Path, 1) ' 1 = reading, 2 = write, 8 = write at the end
@@ -183,6 +197,12 @@
         document.getElementById("LoopImg").src = StateNoLoop
     End Sub
 
+    Sub TogglePause
+        If isPlaying = false Then If pressedSpace = false Then Play()
+        If isPlaying = true Then If pressedSpace = false Then Pause()
+        pressedSpace = false
+    End Sub
+
     ' Called each time a key is pressed
     Sub document_OnKeyDown
         lnum = Window.event.keyCode
@@ -193,12 +213,6 @@
         If Window.event.keyCode = Key_plus Then If started = true Then PlusButton_OnClick()
         If Window.event.keyCode = Key_up Then If started = true Then VolumeUpButton_OnClick()
         If Window.event.keyCode = Key_down Then If started = true Then VolumeDownButton_OnClick()
-    End Sub
-
-    Sub TogglePause
-        If isPlaying = false Then If pressedSpace = false Then Play()
-        If isPlaying = true Then If pressedSpace = false Then Pause()
-        pressedSpace = false
     End Sub
 
     Sub PauseButton_OnClick
@@ -223,19 +237,12 @@
 
     Sub RebindButton_OnClick
         Dim arr : arr = Window.showModalDialog("hta\Rebind.hta", "", "dialogHeight: 228px; dialogWidth: 300px;")
-        Write "C:\Users\20200791\Desktop\Repos\Audio-Go\dat\Bindings.dat", "close", arr(0)
         Key_close = arr(0)
-        Write "C:\Users\20200791\Desktop\Repos\Audio-Go\dat\Bindings.dat", "pause", arr(1)
         Key_pause = arr(1)
-        Write "C:\Users\20200791\Desktop\Repos\Audio-Go\dat\Bindings.dat", "loop", arr(2)
         Key_loop = arr(2)
-        Write "C:\Users\20200791\Desktop\Repos\Audio-Go\dat\Bindings.dat", "minus", arr(3)
         Key_minus = arr(3)
-        Write "C:\Users\20200791\Desktop\Repos\Audio-Go\dat\Bindings.dat", "plus", arr(4)
         Key_plus = arr(4)
-        Write "C:\Users\20200791\Desktop\Repos\Audio-Go\dat\Bindings.dat", "up", arr(5)
         Key_up = arr(5)
-        Write "C:\Users\20200791\Desktop\Repos\Audio-Go\dat\Bindings.dat", "down", arr(6)
         Key_down = arr(6)
     End Sub
 
