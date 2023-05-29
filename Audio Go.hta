@@ -7,9 +7,8 @@
 </head>
 
 <script language="VBScript">
-
-    If Not FileExists("C:\Users\20200791\Desktop\Repos\Audio-Go\dat\Bindings.dat") Then 
-        Set FSO = CreateObject("Scripting.FileSystemObject")
+    Set FSO = CreateObject("Scripting.FileSystemObject")
+    If Not FSO.FileExists("C:\Users\20200791\Desktop\Repos\Audio-Go\dat\Bindings.dat") Then 
         Set File = FSO.CreateTextFile("C:\Users\20200791\Desktop\Repos\Audio-Go\dat\Bindings.dat", 2)
         File.Write "close 27" & vbCrLf & "pause 32" & vbCrLf & "loop 82" & vbCrLf & "minus 37" & vbCrLf & "plus 39" & vbCrLf & "up 38" & vbCrLf & "down 40"
     End If
