@@ -19,6 +19,16 @@
         Key_up = Read("C:\Users\20200791\Desktop\Repos\Audio-Go\dat\Bindings.dat", "up")
         Key_down = Read("C:\Users\20200791\Desktop\Repos\Audio-Go\dat\Bindings.dat", "down")
 
+        Sub Window_OnLoad
+            document.getElementById("CloseSpan").innerHTML = Key_close
+            document.getElementById("PauseSpan").innerHTML = Key_pause
+            document.getElementById("LoopSpan").innerHTML = Key_loop
+            document.getElementById("MinusSpan").innerHTML = Key_minus
+            document.getElementById("PlusSpan").innerHTML = Key_plus
+            document.getElementById("UpSpan").innerHTML = Key_up
+            document.getElementById("DownSpan").innerHTML = Key_down
+        End Sub
+
         ' Called each time a key is pressed
         Sub document_OnKeyDown
             If Not ChangingKey = 0 Then

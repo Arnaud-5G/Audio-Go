@@ -22,13 +22,13 @@
     startVolume = 50
 
     ' Bindings
-    Key_close = Read("C:\Users\20200791\Desktop\Repos\Audio-Go\dat\Bindings.dat", "close")
-    Key_pause = Read("C:\Users\20200791\Desktop\Repos\Audio-Go\dat\Bindings.dat", "pause")
-    Key_loop = Read("C:\Users\20200791\Desktop\Repos\Audio-Go\dat\Bindings.dat", "loop")
-    Key_minus = Read("C:\Users\20200791\Desktop\Repos\Audio-Go\dat\Bindings.dat", "minus")
-    Key_plus = Read("C:\Users\20200791\Desktop\Repos\Audio-Go\dat\Bindings.dat", "plus")
-    Key_up = Read("C:\Users\20200791\Desktop\Repos\Audio-Go\dat\Bindings.dat", "up")
-    Key_down = Read("C:\Users\20200791\Desktop\Repos\Audio-Go\dat\Bindings.dat", "down")
+    Key_close = CInt(Read("C:\Users\20200791\Desktop\Repos\Audio-Go\dat\Bindings.dat", "close"))
+    Key_pause = CInt(Read("C:\Users\20200791\Desktop\Repos\Audio-Go\dat\Bindings.dat", "pause"))
+    Key_loop = CInt(Read("C:\Users\20200791\Desktop\Repos\Audio-Go\dat\Bindings.dat", "loop"))
+    Key_minus = CInt(Read("C:\Users\20200791\Desktop\Repos\Audio-Go\dat\Bindings.dat", "minus"))
+    Key_plus = CInt(Read("C:\Users\20200791\Desktop\Repos\Audio-Go\dat\Bindings.dat", "plus"))
+    Key_up = CInt(Read("C:\Users\20200791\Desktop\Repos\Audio-Go\dat\Bindings.dat", "up"))
+    Key_down = CInt(Read("C:\Users\20200791\Desktop\Repos\Audio-Go\dat\Bindings.dat", "down"))
 
     ' Pause States
     StatePause = "png\PlayIcon.png"
@@ -48,22 +48,24 @@
     ' is called when a song is chosen
     Sub StartUp
         SongPath = document.getElementById("mp3Selector").value
-        started = true
-        ' Play audio
-        oPlayer.URL = SongPath
-        oPlayer.settings.volume = startVolume
+        If Not SongPath = "" Then 
+            started = true
+            ' Play audio
+            oPlayer.URL = SongPath
+            oPlayer.settings.volume = startVolume
 
-        ' ex. oPlayer.Controls.currentPosition = 0 ? test = oPlayer.Controls.currentPosition
-        ' msgbox oPlayer.currentmedia.duration
+            ' ex. oPlayer.Controls.currentPosition = 0 ? test = oPlayer.Controls.currentPosition
+            ' msgbox oPlayer.currentmedia.duration
 
-        a = Split(SongPath, "\", -1)
-        i = -1
-        for each x in a
-            i = i + 1
-        next
-        b = Split(a(i), ".", 1, 0)
-        SongName = Split(b(0), ".")(0)
-        document.getElementById("mp3Selector").value = SongName
+            a = Split(SongPath, "\", -1)
+            i = -1
+            for each x in a
+                i = i + 1
+            next
+            b = Split(a(i), ".", 1, 0)
+            SongName = Split(b(0), ".")(0)
+            document.getElementById("mp3Selector").value = SongName
+        End If
     End Sub
 
     ' to read in memory
@@ -86,7 +88,7 @@
         Set FSO = Nothing
 
         ' return
-        Read = CInt(output)
+        Read = output
     End Function
 
     ' to write in memory
@@ -188,13 +190,13 @@
 
     Sub RebindButton_OnClick
         Dim arr : arr = Window.showModalDialog("hta\Rebind.hta", "", "dialogHeight: 228px; dialogWidth: 300px;")
-        Key_close = arr(0)
-        Key_pause = arr(1)
-        Key_loop = arr(2)
-        Key_minus = arr(3)
-        Key_plus = arr(4)
-        Key_up = arr(5)
-        Key_down = arr(6)
+        If Not arr(0) = "" Then Key_close = arr(0)
+        If Not arr(1) = "" Then Key_pause = arr(1)
+        If Not arr(2) = "" Then Key_loop = arr(2)
+        If Not arr(3) = "" Then Key_minus = arr(3)
+        If Not arr(4) = "" Then Key_plus = arr(4)
+        If Not arr(5) = "" Then Key_up = arr(5)
+        If Not arr(6) = "" Then Key_down = arr(6)
     End Sub
 
     Sub MinusButton_OnClick
