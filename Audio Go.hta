@@ -7,6 +7,7 @@
 </head>
 
 <script language="VBScript">
+    ' if the dat files are missing replace them
     Set FSO = CreateObject("Scripting.FileSystemObject")
     If Not FSO.FileExists("C:\Users\20200791\Desktop\Repos\Audio-Go\dat\Bindings.dat") Then 
         Set File = FSO.CreateTextFile("C:\Users\20200791\Desktop\Repos\Audio-Go\dat\Bindings.dat", 2)
@@ -37,24 +38,24 @@
     Key_down = CInt(Read("C:\Users\20200791\Desktop\Repos\Audio-Go\dat\Bindings.dat", "down"))
 
     ' Pause States
-    StatePause = "png\PlayIcon.png"
-    StatePlay = "png\PauseIcon.png"
+    Const StatePause = "png\PlayIcon.png"
+    Const StatePlay = "png\PauseIcon.png"
 
     ' Loop States
-    StateNoLoop = "png\NoLoopIcon.png"
-    StateLoop = "png\LoopIcon.png"
+    Const StateNoLoop = "png\NoLoopIcon.png"
+    Const StateLoop = "png\LoopIcon.png"
 
     ' Volume States
-    StateMinusVolume = "png\-VolumeIcon.png"
-    StateMinVolume = "png\-MinVolumeIcon.png"
+    Const StateMinusVolume = "png\-VolumeIcon.png"
+    Const StateMinVolume = "png\-MinVolumeIcon.png"
 
-    StatePlusVolume = "png\+VolumeIcon.png"
-    StateMaxVolume = "png\+MaxVolumeIcon.png"
+    Const StatePlusVolume = "png\+VolumeIcon.png"
+    Const StateMaxVolume = "png\+MaxVolumeIcon.png"
 
     ' is called when a song is chosen
     Sub StartUp
         SongPath = document.getElementById("mp3Selector").value
-        If Not SongPath = "" Then 
+        If Not SongPath = "" Then
             started = true
             ' Play audio
             oPlayer.URL = SongPath
@@ -62,6 +63,11 @@
 
             ' ex. oPlayer.Controls.currentPosition = 0 ? test = oPlayer.Controls.currentPosition
             ' msgbox oPlayer.currentmedia.duration
+
+            If isLooping = True Then
+                isLooping = False
+                ToggleLoop
+            End If
 
             a = Split(SongPath, "\", -1)
             i = -1
@@ -150,10 +156,8 @@
         started = false
         oPlayer.controls.pause
         isPlaying = false
-        isLooping = false
 
         document.getElementById("PauseImg").src = StatePause
-        document.getElementById("LoopImg").src = StateNoLoop
     End Sub
 
     Sub TogglePause
@@ -164,7 +168,6 @@
 
     ' Called each time a key is pressed
     Sub document_OnKeyDown
-        lnum = Window.event.keyCode
         If Window.event.keyCode = Key_close Then Window.close()
         If Window.event.keyCode = Key_pause Then TogglePause()
         If Window.event.keyCode = Key_loop Then If started = true Then ToggleLoop()
@@ -236,7 +239,7 @@
     End Sub
 
     Sub LoopButton_OnClick
-        If started = true Then ToggleLoop()
+        ToggleLoop()
     End Sub
 
     Sub ToggleLoop
@@ -267,7 +270,7 @@
     <!-- Second Layer -->
     <input type="file" id="mp3Selector" name="mp3Selector" value="" onclick="focus(Window)" tabindex="-1">
 
-    <br>
+
 
     <!-- Third Layer -->
     <button type="button" id="MinusButton" style="margin: 0px;" name="MinusButton" onclick="focus(Window)" tabindex="-1">
