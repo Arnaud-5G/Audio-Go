@@ -1,16 +1,18 @@
 <html lang="en">
-    
 <head>
     <title>Audio Go</title>
     <HTA:APPLICATION ID="oHTA" APPLICATIONNAME="Audio Go" ICON="ico\AppIcon.ico" BORDER="Dialog" CAPTION="Yes"
         SCROLL="No" SHOWINTASKBAR="Yes" SINGLEINSTANCE="No" SYSMENU="Yes" WINDOWSTATE="normal" MaximizeButton="No">
 </head>
+    <meta http-equiv="x-ua-compatible" content="ie=9">
 
 <script language="VBScript">
+    ' Create the needed objects
+    Dim Shell : Set Shell = CreateObject("Shell.Application")
     ' if the dat files are missing replace them
     Set FSO = CreateObject("Scripting.FileSystemObject")
-    If Not FSO.FileExists("C:\Users\20200791\Desktop\Repos\Audio-Go\dat\Bindings.dat") Then 
-        Set File = FSO.CreateTextFile("C:\Users\20200791\Desktop\Repos\Audio-Go\dat\Bindings.dat", 2)
+    If Not FSO.FileExists(".\dat\Bindings.dat") Then 
+        Set File = FSO.CreateTextFile(".\dat\Bindings.dat", 2)
         File.Write "close 27" & vbCrLf & "pause 32" & vbCrLf & "loop 82" & vbCrLf & "minus 37" & vbCrLf & "plus 39" & vbCrLf & "up 38" & vbCrLf & "down 40"
     End If
 
@@ -29,13 +31,13 @@
     startVolume = 50
 
     ' Bindings
-    Key_close = CInt(Read("C:\Users\20200791\Desktop\Repos\Audio-Go\dat\Bindings.dat", "close"))
-    Key_pause = CInt(Read("C:\Users\20200791\Desktop\Repos\Audio-Go\dat\Bindings.dat", "pause"))
-    Key_loop = CInt(Read("C:\Users\20200791\Desktop\Repos\Audio-Go\dat\Bindings.dat", "loop"))
-    Key_minus = CInt(Read("C:\Users\20200791\Desktop\Repos\Audio-Go\dat\Bindings.dat", "minus"))
-    Key_plus = CInt(Read("C:\Users\20200791\Desktop\Repos\Audio-Go\dat\Bindings.dat", "plus"))
-    Key_up = CInt(Read("C:\Users\20200791\Desktop\Repos\Audio-Go\dat\Bindings.dat", "up"))
-    Key_down = CInt(Read("C:\Users\20200791\Desktop\Repos\Audio-Go\dat\Bindings.dat", "down"))
+    Key_close = CInt(Read(".\dat\Bindings.dat", "close"))
+    Key_pause = CInt(Read(".\dat\Bindings.dat", "pause"))
+    Key_loop = CInt(Read(".\dat\Bindings.dat", "loop"))
+    Key_minus = CInt(Read(".\dat\Bindings.dat", "minus"))
+    Key_plus = CInt(Read(".\dat\Bindings.dat", "plus"))
+    Key_up = CInt(Read(".\dat\Bindings.dat", "up"))
+    Key_down = CInt(Read(".\dat\Bindings.dat", "down"))
 
     ' Pause States
     Const StatePause = "png\PlayIcon.png"
@@ -61,22 +63,10 @@
             oPlayer.URL = SongPath
             oPlayer.settings.volume = startVolume
 
-            ' ex. oPlayer.Controls.currentPosition = 0 ? test = oPlayer.Controls.currentPosition
-            ' msgbox oPlayer.currentmedia.duration
-
             If isLooping = True Then
                 isLooping = False
                 ToggleLoop
             End If
-
-            a = Split(SongPath, "\", -1)
-            i = -1
-            for each x in a
-                i = i + 1
-            next
-            b = Split(a(i), ".", 1, 0)
-            SongName = Split(b(0), ".")(0)
-            document.getElementById("mp3Selector").value = SongName
         End If
     End Sub
 
@@ -156,6 +146,8 @@
         started = false
         oPlayer.controls.pause
         isPlaying = false
+
+        ' SongPath = Shell.BrowseForFolder(0, "Choose a folder:", &H4410)
 
         document.getElementById("PauseImg").src = StatePause
     End Sub

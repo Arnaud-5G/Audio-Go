@@ -11,13 +11,13 @@
         ' Bindings
         ChangingKey = 0
 
-        Key_close = Read("C:\Users\20200791\Desktop\Repos\Audio-Go\dat\Bindings.dat", "close")
-        Key_pause = Read("C:\Users\20200791\Desktop\Repos\Audio-Go\dat\Bindings.dat", "pause")
-        Key_loop = Read("C:\Users\20200791\Desktop\Repos\Audio-Go\dat\Bindings.dat", "loop")
-        Key_minus = Read("C:\Users\20200791\Desktop\Repos\Audio-Go\dat\Bindings.dat", "minus")
-        Key_plus = Read("C:\Users\20200791\Desktop\Repos\Audio-Go\dat\Bindings.dat", "plus")
-        Key_up = Read("C:\Users\20200791\Desktop\Repos\Audio-Go\dat\Bindings.dat", "up")
-        Key_down = Read("C:\Users\20200791\Desktop\Repos\Audio-Go\dat\Bindings.dat", "down")
+        Key_close = Read(".\dat\Bindings.dat", "close")
+        Key_pause = Read(".\dat\Bindings.dat", "pause")
+        Key_loop = Read(".\dat\Bindings.dat", "loop")
+        Key_minus = Read(".\dat\Bindings.dat", "minus")
+        Key_plus = Read(".\dat\Bindings.dat", "plus")
+        Key_up = Read(".\dat\Bindings.dat", "up")
+        Key_down = Read(".\dat\Bindings.dat", "down")
 
         Sub Window_OnLoad
             document.getElementById("CloseSpan").innerHTML = Key_close
@@ -169,13 +169,13 @@
         Sub Window_OnUnload
             Dim returnArr : returnArr = Array(Key_close, Key_pause, Key_loop, Key_minus, Key_plus, Key_up, Key_down)
             window.returnValue = returnArr
-            Write "C:\Users\20200791\Desktop\Repos\Audio-Go\dat\Bindings.dat", "close", returnArr(0)
-            Write "C:\Users\20200791\Desktop\Repos\Audio-Go\dat\Bindings.dat", "pause", returnArr(1)
-            Write "C:\Users\20200791\Desktop\Repos\Audio-Go\dat\Bindings.dat", "loop", returnArr(2)
-            Write "C:\Users\20200791\Desktop\Repos\Audio-Go\dat\Bindings.dat", "minus", returnArr(3)
-            Write "C:\Users\20200791\Desktop\Repos\Audio-Go\dat\Bindings.dat", "plus", returnArr(4)
-            Write "C:\Users\20200791\Desktop\Repos\Audio-Go\dat\Bindings.dat", "up", returnArr(5)
-            Write "C:\Users\20200791\Desktop\Repos\Audio-Go\dat\Bindings.dat", "down", returnArr(6)
+            Write ".\dat\Bindings.dat", "close", returnArr(0)
+            Write ".\dat\Bindings.dat", "pause", returnArr(1)
+            Write ".\dat\Bindings.dat", "loop", returnArr(2)
+            Write ".\dat\Bindings.dat", "minus", returnArr(3)
+            Write ".\dat\Bindings.dat", "plus", returnArr(4)
+            Write ".\dat\Bindings.dat", "up", returnArr(5)
+            Write ".\dat\Bindings.dat", "down", returnArr(6)
             window.close()
         End Sub
 
