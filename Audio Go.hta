@@ -1,7 +1,7 @@
 <html lang="en">
 <head>
     <title>Audio Go</title>
-    <HTA:APPLICATION ID="oHTA" APPLICATIONNAME="Audio Go" ICON="ico\AppIcon.ico" BORDER="Dialog" CAPTION="Yes"
+    <HTA:APPLICATION ID="oHTA" APPLICATIONNAME="Audio Go" ICON=".\Data\ico\AppIcon.ico" BORDER="Dialog" CAPTION="Yes"
         SCROLL="No" SHOWINTASKBAR="Yes" SINGLEINSTANCE="No" SYSMENU="Yes" WINDOWSTATE="normal" MaximizeButton="No">
 </head>
     <meta http-equiv="x-ua-compatible" content="ie=9">
@@ -11,8 +11,8 @@
     Dim Shell : Set Shell = CreateObject("Shell.Application")
     ' if the dat files are missing replace them
     Set FSO = CreateObject("Scripting.FileSystemObject")
-    If Not FSO.FileExists(".\dat\Bindings.dat") Then 
-        Set File = FSO.CreateTextFile(".\dat\Bindings.dat", 2)
+    If Not FSO.FileExists(".\Data\dat\Bindings.dat") Then 
+        Set File = FSO.CreateTextFile(".\Data\dat\Bindings.dat", 2)
         File.Write "close 27" & vbCrLf & "pause 32" & vbCrLf & "loop 82" & vbCrLf & "minus 37" & vbCrLf & "plus 39" & vbCrLf & "up 38" & vbCrLf & "down 40"
     End If
 
@@ -31,28 +31,28 @@
     startVolume = 50
 
     ' Bindings
-    Key_close = CInt(Read(".\dat\Bindings.dat", "close"))
-    Key_pause = CInt(Read(".\dat\Bindings.dat", "pause"))
-    Key_loop = CInt(Read(".\dat\Bindings.dat", "loop"))
-    Key_minus = CInt(Read(".\dat\Bindings.dat", "minus"))
-    Key_plus = CInt(Read(".\dat\Bindings.dat", "plus"))
-    Key_up = CInt(Read(".\dat\Bindings.dat", "up"))
-    Key_down = CInt(Read(".\dat\Bindings.dat", "down"))
+    Key_close = CInt(Read(".\Data\dat\Bindings.dat", "close"))
+    Key_pause = CInt(Read(".\Data\dat\Bindings.dat", "pause"))
+    Key_loop = CInt(Read(".\Data\dat\Bindings.dat", "loop"))
+    Key_minus = CInt(Read(".\Data\dat\Bindings.dat", "minus"))
+    Key_plus = CInt(Read(".\Data\dat\Bindings.dat", "plus"))
+    Key_up = CInt(Read(".\Data\dat\Bindings.dat", "up"))
+    Key_down = CInt(Read(".\Data\dat\Bindings.dat", "down"))
 
     ' Pause States
-    Const StatePause = "png\PlayIcon.png"
-    Const StatePlay = "png\PauseIcon.png"
+    Const StatePause = ".\Data\png\PlayIcon.png"
+    Const StatePlay = ".\Data\png\PauseIcon.png"
 
     ' Loop States
-    Const StateNoLoop = "png\NoLoopIcon.png"
-    Const StateLoop = "png\LoopIcon.png"
+    Const StateNoLoop = ".\Data\png\NoLoopIcon.png"
+    Const StateLoop = ".\Data\png\LoopIcon.png"
 
     ' Volume States
-    Const StateMinusVolume = "png\-VolumeIcon.png"
-    Const StateMinVolume = "png\-MinVolumeIcon.png"
+    Const StateMinusVolume = ".\Data\png\-VolumeIcon.png"
+    Const StateMinVolume = ".\Data\png\-MinVolumeIcon.png"
 
-    Const StatePlusVolume = "png\+VolumeIcon.png"
-    Const StateMaxVolume = "png\+MaxVolumeIcon.png"
+    Const StatePlusVolume = ".\Data\png\+VolumeIcon.png"
+    Const StateMaxVolume = ".\Data\png\+MaxVolumeIcon.png"
 
     ' is called when a song is chosen
     Sub StartUp
@@ -147,8 +147,6 @@
         oPlayer.controls.pause
         isPlaying = false
 
-        ' SongPath = Shell.BrowseForFolder(0, "Choose a folder:", &H4410)
-
         document.getElementById("PauseImg").src = StatePause
     End Sub
 
@@ -190,7 +188,7 @@
     End Sub
 
     Sub RebindButton_OnClick
-        Dim arr : arr = Window.showModalDialog("hta\Rebind.hta", "", "dialogHeight: 228px; dialogWidth: 300px;")
+        Dim arr : arr = Window.showModalDialog(".\Data\hta\Rebind.hta", "", "dialogHeight: 228px; dialogWidth: 300px;")
         If Not arr(0) = "" Then Key_close = arr(0)
         If Not arr(1) = "" Then Key_pause = arr(1)
         If Not arr(2) = "" Then Key_loop = arr(2)
@@ -266,15 +264,15 @@
 
     <!-- Third Layer -->
     <button type="button" id="MinusButton" style="margin: 0px;" name="MinusButton" onclick="focus(Window)" tabindex="-1">
-        <img src="png/-TimeIcon.png" height="32px" width="32px" /></button>
+        <img src="Data/png/-TimeIcon.png" height="32px" width="32px" /></button>
     <button type="button" id="PauseButton" style="margin: 0px 6px 0px;" name="PauseButton" onclick="focus(Window)" tabindex="-1">
-        <img id="PauseImg" src="png/PlayIcon.png" height="32px" width="32px" /></button>
+        <img id="PauseImg" src="Data/png/PlayIcon.png" height="32px" width="32px" /></button>
     <button type="button" id="PlusButton" style="margin: 0px;" name="PlusButton" onclick="focus(Window)" tabindex="-1">
-        <img src="png\+TimeIcon.png" height="32px" width="32px" /></button>
+        <img src="Data/png/+TimeIcon.png" height="32px" width="32px" /></button>
     <button type="button" id="VolumeDownButton" style="margin: 0px 6px 0px;" name="VolumeDownButton" onclick="focus(Window)" tabindex="-1">
-        <img id="DownImg" src="png\-VolumeIcon.png" height="32px" width="32px" /></button>
+        <img id="DownImg" src="Data/png/-VolumeIcon.png" height="32px" width="32px" /></button>
     <button type="button" id="VolumeUpButton" style="margin: 0px;" name="VolumeUpButton" onclick="focus(Window)" tabindex="-1">
-        <img id="UpImg" src="png\+VolumeIcon.png" height="32px" width="32px" /></button>
+        <img id="UpImg" src="Data/png/+VolumeIcon.png" height="32px" width="32px" /></button>
     <button type="button" id="LoopButton" style="margin: 0px 17px 0px;" name="LoopButton" onclick="focus(Window)" tabindex="-1">
-        <img id="LoopImg" src="png\NoLoopIcon.png" height="32px" width="32px" /></button>
+        <img id="LoopImg" src="Data/png/NoLoopIcon.png" height="32px" width="32px" /></button>
 </body>
