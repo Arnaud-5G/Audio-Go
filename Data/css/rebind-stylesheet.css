@@ -1,0 +1,13 @@
+/* ----------------------- IE 8 ---------------------------------- */
+* {}
+
+body {
+    border: none;
+    font-family: Arial, sans-serif;
+    line-height: 1;
+    background-color: #fff;
+}
+
+button {
+    cursor: pointer;
+}

@@ -1,10 +1,8 @@
 <html lang="en">
 <head>
-    <title>Audio Go</title>
-    <meta http-equiv="x-ua-compatible" content="IE=9"/>
-    <link rel="stylesheet" type="text/css" href="Data/css/app-stylesheet.css">
+    <title>Audio Go Legacy</title>
 
-    <HTA:APPLICATION ID="AudioGo" APPLICATIONNAME="Audio Go" ICON="Data\ico\AppIcon.ico" BORDER="Dialog" CAPTION="Yes"
+    <HTA:APPLICATION ID="OldAudioGo" APPLICATIONNAME="Audio Go Old UI" ICON="Data\ico\AppIcon.ico" BORDER="Dialog" CAPTION="Yes"
         SCROLL="No" SHOWINTASKBAR="Yes" SINGLEINSTANCE="Yes" SYSMENU="Yes" WINDOWSTATE="Normal" MaximizeButton="No">
 </head>
 
@@ -29,12 +27,8 @@
 
     'Create the Audio Player Object
     Dim oPlayer: Set oPlayer = CreateObject("WMPlayer.OCX")
-    Set oPlaylist = oPlayer.newPlaylist("myplaylist", "")
 
     ' Create the vars
-    hasLoaded = false
-    hasScrollbar = false
-    hasChangedScrollbarPadding = false
     started = false
     isPlaying = false
     isLooping = false
@@ -68,20 +62,11 @@
 
     ' is called when a song is chosen
     Sub StartUp
-        oPlayer.settings.autoStart = false
-
-        If document.getElementById("mp3Selector").value <> "" Then
-            SongPath = document.getElementById("mp3Selector").value
-            oPlayer.URL = SongPath
-        Else If document.getElementById("mp3folderselector").value <> "" Then 
-            SongPath = document.getElementById("mp3folderselector").value
-            CreatePlaylist SongPath
-            oPlayer.currentPlaylist = oPlaylist
-        Else
-            Exit Sub
-        End If
-
+        SongPath = document.getElementById("mp3Selector").value
+        If Not SongPath = "" Then
             started = true
+            ' Play audio
+            oPlayer.URL = SongPath
             oPlayer.settings.volume = startVolume
 
             If isLooping = True Then
@@ -199,60 +184,12 @@
         FSO.DeleteFile(PathOverwrite)
     End Sub
 
-    Sub CreatePlaylist(folderPath)
-        Dim fso, folder, file, media
-        Set fso = CreateObject("Scripting.FileSystemObject")
-        Set folder = fso.GetFolder(folderPath)
-        For each file in folder.Files
-            Ext = Array("mp3", "mp4", "mid", "midi", "wav", "wma", "m4a", "flac", "aac", "ogg", "oga", "webm", "weba", "opus", "3gp", "3g2", "amr", "aiff", "aif", "aifc", "mka", "mkv")
-            For each filetype in Ext
-                If LCase(fso.GetExtensionName(file.name)) = LCase(filetype) Then 
-                    Set media = oPlayer.newMedia(file.Path)
-                    oPlaylist.appendItem(media)
-                end if
-            Next
-        Next
-    End Sub
-
     Sub mp3Selector_OnClick
         started = false
         oPlayer.controls.pause
         isPlaying = false
 
         document.getElementById("PauseImg").src = StatePause
-    End Sub
-
-    Sub mp3Selector_OnChange
-        document.getElementById("mp3text").innerHTML = Split(document.getElementById("mp3Selector").value, "\")(UBound(Split(document.getElementById("mp3Selector").value, "\")))
-    End Sub
-
-    Sub mp3text_OnResize
-        If hasLoaded = true AND hasChangedScrollbarPadding = false Then
-            hasScrollbar = Not hasScrollbar
-
-            If hasScrollbar = true Then
-                document.getElementById("mp3text").style.paddingBottom = "2%"
-                document.getElementById("mp3text").style.paddingTop = "2%"
-                document.getElementById("mp3text").style.fontSize = "16px"
-                hasChangedScrollbarPadding = true
-            End If
-
-            If hasScrollbar = false Then
-                document.getElementById("mp3text").style.paddingBottom = "4%"
-                document.getElementById("mp3text").style.paddingTop = "4%"
-                document.getElementById("mp3text").style.fontSize = "20px"
-                hasChangedScrollbarPadding = true
-            End If
-        Else
-            hasChangedScrollbarPadding = false
-        End If
-        hasLoaded = true
-    End Sub
-
-    Sub mp3folderselector_OnClick
-        Dim folder : Set folder = Shell.BrowseForFolder(0, "Choose a folder", &H4410, 0)
-        document.getElementById("mp3text").innerHTML = folder
-        document.getElementById("mp3folderselector").value = folder.self.path
     End Sub
 
     Sub TogglePause
@@ -273,25 +210,12 @@
     End Sub
 
     Sub PauseButton_OnClick
-        If started = true Then
-            TogglePause()
-        End If
-
-        If started = false Then
-            If (document.getElementById("mp3Selector").value <> "") = true Then
-                TogglePause() 
-            End If
-            If (document.getElementById("mp3folderselector").value <> "") = true Then
-                TogglePause()
-            End If
-        End If
+        If started = true Then TogglePause()
+        If started = false Then If(document.getElementById("mp3Selector").value <> "") = true Then TogglePause()
     End Sub
     
     Sub Play
-        If started = false Then 
-            StartUp() 
-        End If
-
+        If started = false Then StartUp()
         document.getElementById("PauseImg").src = StatePlay
         oPlayer.controls.play
         isPlaying = true
@@ -306,7 +230,7 @@
     End Sub
 
     Sub RebindButton_OnClick
-        Dim arr : arr = Window.showModalDialog(".\Data\hta\Rebind.hta", "", "dialogHeight: 228px; dialogWidth: 190px;")
+        Dim arr : arr = Window.showModalDialog(".\Data\hta\OldUI\Rebind.hta", "", "dialogHeight: 228px; dialogWidth: 190px;")
         If Not arr(0) = "" Then Key_close = arr(0)
         If Not arr(1) = "" Then Key_pause = arr(1)
         If Not arr(2) = "" Then Key_loop = arr(2)
@@ -350,6 +274,27 @@
         ToggleLoop()
     End Sub
 
+    Sub FavoriteButton_OnClick
+        if document.getElementById("mp3Selector").value = "" Then Exit Sub
+
+        listVar = GetLastVar(".\Data\dat\Favorites.dat")
+
+        If listVar <> "" Then
+            listVar = CInt(listVar) + 1
+        End If
+        If listVar = "" Then
+            listVar = 0
+        End If
+
+        WriteVar ".\Data\dat\Favorites.dat", listVar, document.getElementById("mp3Selector").value
+    End Sub
+
+    Sub OpenFavoriteButton_OnClick
+        ' Dim arr : arr = Window.showModalDialog(".\Data\hta\OldUI\Favorites.hta", "", "dialogHeight: 228px; dialogWidth: 300px;")
+        music = Window.showModalDialog(".\Data\hta\OldUI\Favorites.hta", "")
+        msgbox music
+    End Sub
+
     Sub ToggleLoop
         If isLooping = true Then If pressedR = false Then setLoop(False)
         If isLooping = false Then If pressedR = false Then setLoop(True)
@@ -371,37 +316,26 @@
 
 <body>
     <!-- First Layer -->
-    <div class="FirstLayer">
-        <button type="button" id="RebindButton" name="RebindButton" onclick="focus(Window)" tabindex="-1"></button>
-    </div>
+    <button type="button" id="RebindButton" style="height: 16px; width: 16px;" name="RebindButton" onclick="focus(Window)" tabindex="-1"></button>
+    <button type="button" id="FavoriteButton" style="height: 16px; width: 16px; margin-left: 8px;" name="FavoriteButton" onclick="focus(Window)" tabindex="-1"></button>
+    <button type="button" id="OpenFavoriteButton" style="height: 16px; width: 16px; margin-left: 8px;" name="OpenFavoriteButton" onclick="focus(Window)" tabindex="-1"></button>
+    
+    <br>
 
     <!-- Second Layer -->
-    <div class="SecondLayer">
-        <span id="mp3text" class="mp3text">Choose a song</span>
-        <label id="mp3wrapper" class="mp3wrapper">
-            <img id="SongIcon" src=".\Data/png/Song.png" /></button>
-            <input type="file" class="mp3selector" id="mp3Selector" name="mp3Selector" value="" onclick="focus(Window)" tabindex="-1">
-        </label>
-        <a id="mp3folderselector" class="mp3folderselector" value="">
-            <img id="SongIcon" src=".\Data/png/Playlist.png" /></button>
-        </a>
-    </div>
+    <input type="file" id="mp3Selector" name="mp3Selector" value="" onclick="focus(Window)" tabindex="-1">
 
     <!-- Third Layer -->
-    <div class="ThirdLayer">
-        <button type="button" id="MinusButton" style="margin-left: 8px" name="MinusButton" onclick="focus(Window)" tabindex="-1">
-            <img id="-TimeIcon" src=".\Data/png/-TimeIcon.png" /></button>
-        <button type="button" id="PauseButton" name="PauseButton" onclick="focus(Window)" tabindex="-1">
-            <img id="PauseImg" src=".\Data/png/PlayIcon.png" /></button>
-        <button type="button" id="PlusButton" style="margin-right: 45px;" name="PlusButton" onclick="focus(Window)" tabindex="-1">
-            <img id="+TimeIcon" src=".\Data/png/+TimeIcon.png" /></button>
-
-        <button type="button" id="VolumeDownButton" name="VolumeDownButton" onclick="focus(Window)" tabindex="-1">
-            <img id="DownImg" src=".\Data/png/-VolumeIcon.png" /></button>
-        <button type="button" id="VolumeUpButton" style="margin-right: 45px;" name="VolumeUpButton" onclick="focus(Window)" tabindex="-1">
-            <img id="UpImg" src=".\Data/png/+VolumeIcon.png" /></button>
-
-        <button type="button" id="LoopButton" name="LoopButton" onclick="focus(Window)" tabindex="-1">
-            <img id="LoopImg" src=".\Data/png/NoLoopIcon.png" /></button>
-    </div>
+    <button type="button" id="MinusButton" style="margin: 0px;" name="MinusButton" onclick="focus(Window)" tabindex="-1">
+        <img src="Data/png/-TimeIcon.png" height="32px" width="32px" /></button>
+    <button type="button" id="PauseButton" style="margin: 0px 6px 0px;" name="PauseButton" onclick="focus(Window)" tabindex="-1">
+        <img id="PauseImg" src="Data/png/PlayIcon.png" height="32px" width="32px" /></button>
+    <button type="button" id="PlusButton" style="margin: 0px;" name="PlusButton" onclick="focus(Window)" tabindex="-1">
+        <img src="Data/png/+TimeIcon.png" height="32px" width="32px" /></button>
+    <button type="button" id="VolumeDownButton" style="margin: 0px 6px 0px;" name="VolumeDownButton" onclick="focus(Window)" tabindex="-1">
+        <img id="DownImg" src="Data/png/-VolumeIcon.png" height="32px" width="32px" /></button>
+    <button type="button" id="VolumeUpButton" style="margin: 0px;" name="VolumeUpButton" onclick="focus(Window)" tabindex="-1">
+        <img id="UpImg" src="Data/png/+VolumeIcon.png" height="32px" width="32px" /></button>
+    <button type="button" id="LoopButton" style="margin: 0px 17px 0px;" name="LoopButton" onclick="focus(Window)" tabindex="-1">
+        <img id="LoopImg" src="Data/png/NoLoopIcon.png" height="32px" width="32px" /></button>
 </body>
