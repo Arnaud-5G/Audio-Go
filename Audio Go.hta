@@ -19,28 +19,20 @@
         File.Write "close 27" & vbCrLf & "pause 32" & vbCrLf & "loop 82" & vbCrLf & "minus 37" & vbCrLf & "plus 39" & vbCrLf & "up 38" & vbCrLf & "down 40"
     End If
 
-    ' Replace Favorites.dat
-    If Not FSO.FileExists(".\Data\dat\Favorites.dat") Then 
-        Set File = FSO.CreateTextFile(".\Data\dat\Favorites.dat", 2)
-    End If
-
     ' Resize the window
     Window.ResizeTo 392, 190 ' false x, true y
 
     'Create the Audio Player Object
     Dim oPlayer: Set oPlayer = CreateObject("WMPlayer.OCX")
     Set oPlaylist = oPlayer.newPlaylist("myplaylist", "")
-    Set oPlaylist = oPlayer.newPlaylist("myplaylist", "")
 
     ' Create the vars
     hasLoaded = false
     hasScrollbar = false
     hasChangedScrollbarPadding = false
-    hasLoaded = false
-    hasScrollbar = false
-    hasChangedScrollbarPadding = false
     started = false
     isPlaying = false
+    musicTarget = "" ' "Song" or "Playlist"
     isLooping = false
     pressedSpace = false
     pressedR = false
@@ -74,14 +66,10 @@
     Sub StartUp
         oPlayer.settings.autoStart = false
 
-        If document.getElementById("mp3Selector").value <> "" Then
-            SongPath = document.getElementById("mp3Selector").value
-        oPlayer.settings.autoStart = false
-
-        If document.getElementById("mp3Selector").value <> "" Then
+        If document.getElementById("mp3Selector").value <> "" AND musicTarget = "Song" Then
             SongPath = document.getElementById("mp3Selector").value
             oPlayer.URL = SongPath
-        Else If document.getElementById("mp3folderselector").value <> "" Then 
+        Else If document.getElementById("mp3folderselector").value <> "" AND musicTarget = "Playlist" Then 
             SongPath = document.getElementById("mp3folderselector").value
             CreatePlaylist SongPath
             oPlayer.currentPlaylist = oPlaylist
@@ -148,34 +136,7 @@
         GetLastVar = VarName
     End Function
 
-    Function GetLastVar(Path)
-        Set FSO = CreateObject("Scripting.FileSystemObject")
-        Set File = FSO.OpenTextFile(Path, 1) ' 1 = reading, 2 = write, 8 = write at the end
-
-        If FSO.GetFile(Path).Size = 0 Then ' if the file is empty
-            GetLastVar = ""
-            Exit Function
-        End If
-
-        allData = File.readall
-        File.Close
-
-        If Split(allData, vbCrLf)(UBound(Split(allData, vbCrLf))-1) = "" Then ' if last line is empty
-            GetLastVar = ""
-            Exit Function
-        End If
-
-        VarName = Split(Split(allData, vbCrLf)(UBound(Split(allData, vbCrLf))-1), " ", 2)(0) ' get the last var (UBound = last index)
-        ' memory management (vbs does not have one for objects only vars have one)
-        Set File = Nothing
-        Set FSO = Nothing
-
-        ' return
-        GetLastVar = VarName
-    End Function
-
     ' to write in memory
-    Sub WriteVar(Path, Var, Text)
     Sub WriteVar(Path, Var, Text)
         Set FSO = CreateObject("Scripting.FileSystemObject")
         Set File = FSO.OpenTextFile(Path, 1) ' 1 = reading, 2 = write, 8 = write at the end
@@ -205,22 +166,13 @@
                 VarName = Split(ln, " ", 2)(0)
             End If
 
-            If ln <> "" Then
-                VarName = Split(ln, " ", 2)(0)
-            End If
-
             If VarName = Var Then
                 FileOver.WriteLine Var & " " & Text
-                added = true
                 added = true
             Else
                 FileOver.WriteLine ln
             End If
         Loop
-
-        If added <> true Then
-            FileOver.WriteLine Var & " " & Text
-        End If
 
         If added <> true Then
             FileOver.WriteLine Var & " " & Text
@@ -237,30 +189,10 @@
             text = FileOver.ReadAll
             File.Write text
         End If
-        If FSO.GetFile(PathOverwrite).Size <> 0 Then
-            text = FileOver.ReadAll
-            File.Write text
-        End If
         File.Close
         FileOver.Close
 
         FSO.DeleteFile(PathOverwrite)
-    End Sub
-
-    Sub CreatePlaylist(folderPath)
-        Dim fso, folder, file, media
-        Set fso = CreateObject("Scripting.FileSystemObject")
-        Set folder = fso.GetFolder(folderPath)
-        For each file in folder.Files
-            Ext = Array("mp3", "mp4", "mid", "midi", "wav", "wma", "m4a", "flac", "aac", "ogg", "oga", "webm", "weba", "opus", "3gp", "3g2", "amr", "aiff", "aif", "aifc", "mka", "mkv")
-            For each filetype in Ext
-                If LCase(fso.GetExtensionName(file.name)) = LCase(filetype) Then 
-                    Set media = oPlayer.newMedia(file.Path)
-                    oPlaylist.appendItem(media)
-                end if
-            Next
-        Next
-    End Sub
     End Sub
 
     Sub CreatePlaylist(folderPath)
@@ -288,6 +220,8 @@
 
     Sub mp3Selector_OnChange
         document.getElementById("mp3text").innerHTML = Split(document.getElementById("mp3Selector").value, "\")(UBound(Split(document.getElementById("mp3Selector").value, "\")))
+        oPlaylist.clear
+        musicTarget = "Song"
     End Sub
 
     Sub mp3text_OnResize
@@ -314,42 +248,19 @@
     End Sub
 
     Sub mp3folderselector_OnClick
+        started = false
+        oPlayer.controls.pause
+        isPlaying = false
+
+        document.getElementById("PauseImg").src = StatePause
+
         Dim folder : Set folder = Shell.BrowseForFolder(0, "Choose a folder", &H4410, 0)
-        document.getElementById("mp3text").innerHTML = folder
-        document.getElementById("mp3folderselector").value = folder.self.path
-    End Sub
-
-    Sub mp3Selector_OnChange
-        document.getElementById("mp3text").innerHTML = Split(document.getElementById("mp3Selector").value, "\")(UBound(Split(document.getElementById("mp3Selector").value, "\")))
-    End Sub
-
-    Sub mp3text_OnResize
-        If hasLoaded = true AND hasChangedScrollbarPadding = false Then
-            hasScrollbar = Not hasScrollbar
-
-            If hasScrollbar = true Then
-                document.getElementById("mp3text").style.paddingBottom = "2%"
-                document.getElementById("mp3text").style.paddingTop = "2%"
-                document.getElementById("mp3text").style.fontSize = "16px"
-                hasChangedScrollbarPadding = true
-            End If
-
-            If hasScrollbar = false Then
-                document.getElementById("mp3text").style.paddingBottom = "4%"
-                document.getElementById("mp3text").style.paddingTop = "4%"
-                document.getElementById("mp3text").style.fontSize = "20px"
-                hasChangedScrollbarPadding = true
-            End If
-        Else
-            hasChangedScrollbarPadding = false
+        
+        If folder.self.path <> "" Then
+            musicTarget = "Playlist"
+            document.getElementById("mp3text").innerHTML = folder
+            document.getElementById("mp3folderselector").value = folder.self.path
         End If
-        hasLoaded = true
-    End Sub
-
-    Sub mp3folderselector_OnClick
-        Dim folder : Set folder = Shell.BrowseForFolder(0, "Choose a folder", &H4410, 0)
-        document.getElementById("mp3text").innerHTML = folder
-        document.getElementById("mp3folderselector").value = folder.self.path
     End Sub
 
     Sub TogglePause
@@ -370,17 +281,12 @@
     End Sub
 
     Sub PauseButton_OnClick
-        If started = true Then
-            TogglePause()
-        End If
+        On Error Resume Next
 
-        If started = false Then
-            If (document.getElementById("mp3Selector").value <> "") = true Then
-                TogglePause() 
-            End If
-            If oPlaylist.count <> 0 Then
-                TogglePause()
-            End If
+        If document.getElementById("mp3Selector").value <> "" AND musicTarget = "Song" Then
+            TogglePause() 
+        ElseIf document.getElementById("mp3folderselector").value <> "" AND musicTarget = "Playlist" Then
+            TogglePause()
         End If
     End Sub
     
@@ -403,7 +309,6 @@
     End Sub
 
     Sub RebindButton_OnClick
-        Dim arr : arr = Window.showModalDialog(".\Data\hta\Rebind.hta", "", "dialogHeight: 228px; dialogWidth: 190px;")
         Dim arr : arr = Window.showModalDialog(".\Data\hta\Rebind.hta", "", "dialogHeight: 228px; dialogWidth: 190px;")
         If Not arr(0) = "" Then Key_close = arr(0)
         If Not arr(1) = "" Then Key_pause = arr(1)
@@ -462,16 +367,10 @@
         isLooping = Bool
     End Sub
 
-    Sub Foo
-    End Sub
-
 </script>
 
 <body>
     <!-- First Layer -->
-    <div class="FirstLayer">
-        <button type="button" id="RebindButton" name="RebindButton" onclick="focus(Window)" tabindex="-1"></button>
-    </div>
     <div class="FirstLayer">
         <button type="button" id="RebindButton" name="RebindButton" onclick="focus(Window)" tabindex="-1"></button>
     </div>
@@ -484,35 +383,25 @@
             <input type="file" class="mp3selector" id="mp3Selector" name="mp3Selector" value="" onclick="focus(Window)" tabindex="-1">
         </label>
         <a id="mp3folderselector" class="mp3folderselector" value="">
-            <img id="SongIcon" src=".\Data/png/Playlist.png" /></button>
-        </a>
-    </div>
-    <div class="SecondLayer">
-        <span id="mp3text" class="mp3text">Choose a song</span>
-        <label id="mp3wrapper" class="mp3wrapper">
-            <img id="SongIcon" src=".\Data/png/Song.png" /></button>
-            <input type="file" class="mp3selector" id="mp3Selector" name="mp3Selector" value="" onclick="focus(Window)" tabindex="-1">
-        </label>
-        <a id="mp3folderselector" class="mp3folderselector" value="">
-            <img id="SongIcon" src=".\Data/png/Playlist.png" /></button>
+            <img id="PlaylistIcon" src=".\Data/png/Playlist.png" /></button>
         </a>
     </div>
 
     <!-- Third Layer -->
     <div class="ThirdLayer">
-        <a type="button" id="MinusButton" style="margin-left: 8px" name="MinusButton" onclick="focus(Window)" tabindex="-1">
+        <button type="button" id="MinusButton" style="margin-left: 8px" name="MinusButton" onclick="focus(Window)" tabindex="-1">
             <img id="-TimeIcon" src=".\Data/png/-TimeIcon.png" /></button>
-        <a type="button" id="PauseButton" name="PauseButton" onclick="focus(Window)" tabindex="-1">
+        <button type="button" id="PauseButton" name="PauseButton" onclick="focus(Window)" tabindex="-1">
             <img id="PauseImg" src=".\Data/png/PlayIcon.png" /></button>
-        <a type="button" id="PlusButton" style="margin-right: 45px;" name="PlusButton" onclick="focus(Window)" tabindex="-1">
+        <button type="button" id="PlusButton" style="margin-right: 45px;" name="PlusButton" onclick="focus(Window)" tabindex="-1">
             <img id="+TimeIcon" src=".\Data/png/+TimeIcon.png" /></button>
 
-        <a type="button" id="VolumeDownButton" name="VolumeDownButton" onclick="focus(Window)" tabindex="-1">
+        <button type="button" id="VolumeDownButton" name="VolumeDownButton" onclick="focus(Window)" tabindex="-1">
             <img id="DownImg" src=".\Data/png/-VolumeIcon.png" /></button>
-        <a type="button" id="VolumeUpButton" style="margin-right: 45px;" name="VolumeUpButton" onclick="focus(Window)" tabindex="-1">
+        <button type="button" id="VolumeUpButton" style="margin-right: 45px;" name="VolumeUpButton" onclick="focus(Window)" tabindex="-1">
             <img id="UpImg" src=".\Data/png/+VolumeIcon.png" /></button>
 
-        <a type="button" id="LoopButton" name="LoopButton" onclick="focus(Window)" tabindex="-1">
+        <button type="button" id="LoopButton" name="LoopButton" onclick="focus(Window)" tabindex="-1">
             <img id="LoopImg" src=".\Data/png/NoLoopIcon.png" /></button>
     </div>
 </body>
