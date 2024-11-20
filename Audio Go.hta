@@ -353,26 +353,6 @@
         ToggleLoop()
     End Sub
 
-    Sub FavoriteButton_OnClick
-        if document.getElementById("mp3Selector").value = "" Then Exit Sub
-
-        listVar = GetLastVar(".\Data\dat\Favorites.dat")
-
-        If listVar <> "" Then
-            listVar = CInt(listVar) + 1
-        End If
-        If listVar = "" Then
-            listVar = 0
-        End If
-
-        WriteVar ".\Data\dat\Favorites.dat", listVar, document.getElementById("mp3Selector").value
-    End Sub
-
-    Sub OpenFavoriteButton_OnClick
-        music = Window.showModalDialog(".\Data\hta\Favorites.hta", "")
-        msgbox music
-    End Sub
-
     Sub ToggleLoop
         If isLooping = true Then If pressedR = false Then setLoop(False)
         If isLooping = false Then If pressedR = false Then setLoop(True)
