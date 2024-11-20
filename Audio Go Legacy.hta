@@ -17,11 +17,6 @@
         File.Write "close 27" & vbCrLf & "pause 32" & vbCrLf & "loop 82" & vbCrLf & "minus 37" & vbCrLf & "plus 39" & vbCrLf & "up 38" & vbCrLf & "down 40"
     End If
 
-    ' Replace Favorites.dat
-    If Not FSO.FileExists(".\Data\dat\Favorites.dat") Then 
-        Set File = FSO.CreateTextFile(".\Data\dat\Favorites.dat", 2)
-    End If
-
     ' Resize the window
     Window.ResizeTo 392, 190 ' false x, true y
 
@@ -274,27 +269,6 @@
         ToggleLoop()
     End Sub
 
-    Sub FavoriteButton_OnClick
-        if document.getElementById("mp3Selector").value = "" Then Exit Sub
-
-        listVar = GetLastVar(".\Data\dat\Favorites.dat")
-
-        If listVar <> "" Then
-            listVar = CInt(listVar) + 1
-        End If
-        If listVar = "" Then
-            listVar = 0
-        End If
-
-        WriteVar ".\Data\dat\Favorites.dat", listVar, document.getElementById("mp3Selector").value
-    End Sub
-
-    Sub OpenFavoriteButton_OnClick
-        ' Dim arr : arr = Window.showModalDialog(".\Data\hta\OldUI\Favorites.hta", "", "dialogHeight: 228px; dialogWidth: 300px;")
-        music = Window.showModalDialog(".\Data\hta\OldUI\Favorites.hta", "")
-        msgbox music
-    End Sub
-
     Sub ToggleLoop
         If isLooping = true Then If pressedR = false Then setLoop(False)
         If isLooping = false Then If pressedR = false Then setLoop(True)
@@ -317,8 +291,6 @@
 <body>
     <!-- First Layer -->
     <button type="button" id="RebindButton" style="height: 16px; width: 16px;" name="RebindButton" onclick="focus(Window)" tabindex="-1"></button>
-    <button type="button" id="FavoriteButton" style="height: 16px; width: 16px; margin-left: 8px;" name="FavoriteButton" onclick="focus(Window)" tabindex="-1"></button>
-    <button type="button" id="OpenFavoriteButton" style="height: 16px; width: 16px; margin-left: 8px;" name="OpenFavoriteButton" onclick="focus(Window)" tabindex="-1"></button>
     
     <br>
 
