@@ -4,10 +4,19 @@
 body {
     border: none;
     font-family: Arial, sans-serif;
-    line-height: 1;
-    background-color: #fff;
+    line-height: .8;
+    background-color: #ddd;
 }
 
 button {
     cursor: pointer;
+}
+
+div {
+    margin-bottom: 3px;
+}
+
+.resetbutton {
+    padding: 10px;
+    padding-right: 15px;
 }

@@ -20,6 +20,7 @@
         Key_plus = Read(".\Data\dat\Bindings.dat", "plus")
         Key_up = Read(".\Data\dat\Bindings.dat", "up")
         Key_down = Read(".\Data\dat\Bindings.dat", "down")
+        Key_skip = Read(".\Data\dat\Bindings.dat", "skip")
 
         Sub Window_OnLoad
             document.getElementById("CloseSpan").innerHTML = Key_close
@@ -29,6 +30,7 @@
             document.getElementById("PlusSpan").innerHTML = Key_plus
             document.getElementById("UpSpan").innerHTML = Key_up
             document.getElementById("DownSpan").innerHTML = Key_down
+            document.getElementById("SkipSpan").innerHTML = Key_skip
         End Sub
 
         ' Called each time a key is pressed
@@ -62,6 +64,10 @@
                     Case 7
                         Key_down = Window.event.keyCode
                         document.getElementById("DownSpan").innerHTML = Key_down
+                        ChangingKey = 0
+                    Case 8
+                        Key_skip = Window.event.keyCode
+                        document.getElementById("SkipSpan").innerHTML = Key_skip
                         ChangingKey = 0
                     Case Else
                         msgbox "Error var: ChangingKey is not in range"
@@ -177,7 +183,7 @@
         End Function
 
         Sub Window_OnUnload
-            Dim returnArr : returnArr = Array(Key_close, Key_pause, Key_loop, Key_minus, Key_plus, Key_up, Key_down)
+            Dim returnArr : returnArr = Array(Key_close, Key_pause, Key_loop, Key_minus, Key_plus, Key_up, Key_down, Key_skip)
             window.returnValue = returnArr
             Write ".\Data\dat\Bindings.dat", "close", returnArr(0)
             Write ".\Data\dat\Bindings.dat", "pause", returnArr(1)
@@ -186,6 +192,7 @@
             Write ".\Data\dat\Bindings.dat", "plus", returnArr(4)
             Write ".\Data\dat\Bindings.dat", "up", returnArr(5)
             Write ".\Data\dat\Bindings.dat", "down", returnArr(6)
+            Write ".\Data\dat\Bindings.dat", "skip", returnArr(7)
             window.close()
         End Sub
 
@@ -217,6 +224,10 @@
             ChangingKey = 7
         End Sub
 
+        Sub SkipButton_OnClick
+            ChangingKey = 8
+        End Sub
+
         Sub DefaultButton_OnClick
             Key_close = 27
             Key_pause = 32
@@ -225,6 +236,7 @@
             Key_plus = 39
             Key_up = 38
             Key_down = 40
+            Key_skip = 17
             document.getElementById("CloseSpan").innerHTML = Key_close
             document.getElementById("PauseSpan").innerHTML = Key_pause
             document.getElementById("LoopSpan").innerHTML = Key_loop
@@ -232,30 +244,42 @@
             document.getElementById("PlusSpan").innerHTML = Key_plus
             document.getElementById("UpSpan").innerHTML = Key_up
             document.getElementById("DownSpan").innerHTML = Key_down
+            document.getElementById("SkipSpan").innerHTML = Key_skip
         End Sub
         </script>
 
-    <button type="button" id="RebindCloseButton" style="height: 24px; width: 24px;" name="RebindCloseButton" onclick="focus(document)" tabindex="-1"></button>
-    Close | <span id="CloseSpan">27</span>
-    <br>
-    <button type="button" id="RebindPauseButton" style="height: 24px; width: 24px;" name="RebindPauseButton" onclick="focus(document)" tabindex="-1"></button>
-    Pause | <span id="PauseSpan">32</span>
-    <br>
-    <button type="button" id="RebindLoopButton" style="height: 24px; width: 24px;" name="RebindLoopButton" onclick="focus(document)" tabindex="-1"></button>
-    Loop | <span id="LoopSpan">82</span>
-    <br>
-    <button type="button" id="RebindPlusButton" style="height: 24px; width: 24px;" name="RebindPlusButton" onclick="focus(document)" tabindex="-1"></button>
-    +5 sec | <span id="PlusSpan">39</span>
-    <br>
-    <button type="button" id="RebindMinusButton" style="height: 24px; width: 24px;" name="RebindMinusButton" onclick="focus(document)" tabindex="-1"></button>
-    -5 sec | <span id="MinusSpan">37</span>
-    <br>
-    <button type="button" id="RebindUpButton" style="height: 24px; width: 24px;" name="RebindUpButton" onclick="focus(document)" tabindex="-1"></button>
-    +Volume | <span id="UpSpan">38</span>
-    <br>
-    <button type="button" id="RebindDownButton" style="height: 24px; width: 24px;" name="RebindDownButton" onclick="focus(document)" tabindex="-1"></button>
-    -Volume | <span id="DownSpan">40</span>
-    <br>
+    <div>
+        <button type="button" id="RebindCloseButton" style="height: 24px; width: 24px;" name="RebindCloseButton" onclick="focus(document)" tabindex="-1"></button>
+        Close | <span id="CloseSpan">27</span>
+    </div>
+    <div>
+        <button type="button" id="RebindPauseButton" style="height: 24px; width: 24px;" name="RebindPauseButton" onclick="focus(document)" tabindex="-1"></button>
+        Pause | <span id="PauseSpan">32</span>
+    </div>
+    <div>
+        <button type="button" id="RebindLoopButton" style="height: 24px; width: 24px;" name="RebindLoopButton" onclick="focus(document)" tabindex="-1"></button>
+        Loop | <span id="LoopSpan">82</span>
+    </div>
+    <div>
+        <button type="button" id="RebindPlusButton" style="height: 24px; width: 24px;" name="RebindPlusButton" onclick="focus(document)" tabindex="-1"></button>
+        +5 sec | <span id="PlusSpan">39</span>
+    </div>
+    <div>
+        <button type="button" id="RebindMinusButton" style="height: 24px; width: 24px;" name="RebindMinusButton" onclick="focus(document)" tabindex="-1"></button>
+        -5 sec | <span id="MinusSpan">37</span>
+    </div>
+    <div>
+        <button type="button" id="RebindUpButton" style="height: 24px; width: 24px;" name="RebindUpButton" onclick="focus(document)" tabindex="-1"></button>
+        +Volume | <span id="UpSpan">38</span>
+    </div>
+    <div>
+        <button type="button" id="RebindDownButton" style="height: 24px; width: 24px;" name="RebindDownButton" onclick="focus(document)" tabindex="-1"></button>
+        -Volume | <span id="DownSpan">40</span>
+    </div>
+    <div>
+        <button type="button" id="SkipButton" style="height: 24px; width: 24px;" name="SkipButton" onclick="focus(document)" tabindex="-1"></button>
+        Skip | <span id="SkipSpan">17</span>
+    </div>
     <button type="button" class="resetbutton" id="DefaultButton" name="DefaultButton" onclick="focus(document)" tabindex="-1">Set Default</button>
 </body>
 

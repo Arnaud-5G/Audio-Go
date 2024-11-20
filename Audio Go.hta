@@ -16,7 +16,7 @@
     ' Replace Bindings.dat
     If Not FSO.FileExists(".\Data\dat\Bindings.dat") Then 
         Set File = FSO.CreateTextFile(".\Data\dat\Bindings.dat", 2)
-        File.Write "close 27" & vbCrLf & "pause 32" & vbCrLf & "loop 82" & vbCrLf & "minus 37" & vbCrLf & "plus 39" & vbCrLf & "up 38" & vbCrLf & "down 40"
+        File.Write "close 27" & vbCrLf & "pause 32" & vbCrLf & "loop 82" & vbCrLf & "minus 37" & vbCrLf & "plus 39" & vbCrLf & "up 38" & vbCrLf & "down 40" & vbCrLf & "skip 17"
     End If
 
     ' Resize the window
@@ -36,6 +36,7 @@
     isLooping = false
     pressedSpace = false
     pressedR = false
+    isPressingSkip = false
     startVolume = 50
 
     ' Bindings
@@ -46,10 +47,17 @@
     Key_plus = CInt(Read(".\Data\dat\Bindings.dat", "plus"))
     Key_up = CInt(Read(".\Data\dat\Bindings.dat", "up"))
     Key_down = CInt(Read(".\Data\dat\Bindings.dat", "down"))
+    Key_skip = CInt(Read(".\Data\dat\Bindings.dat", "skip"))
 
     ' Pause States
     Const StatePause = ".\Data\png\PlayIcon.png"
     Const StatePlay = ".\Data\png\PauseIcon.png"
+
+    ' Skip States
+    Const StatePlusSkip = ".\Data\png\+TimeSkipIcon.png"
+    Const StatePlusNoSkip = ".\Data\png\+TimeIcon.png"
+    Const StateMinusSkip = ".\Data\png\-TimeSkipIcon.png"
+    Const StateMinusNoSkip = ".\Data\png\-TimeIcon.png"
 
     ' Loop States
     Const StateNoLoop = ".\Data\png\NoLoopIcon.png"
@@ -222,6 +230,7 @@
         document.getElementById("mp3text").innerHTML = Split(document.getElementById("mp3Selector").value, "\")(UBound(Split(document.getElementById("mp3Selector").value, "\")))
         oPlaylist.clear
         musicTarget = "Song"
+        If isPressingSkip = true then ToggleSkip()
     End Sub
 
     Sub mp3text_OnResize
@@ -258,6 +267,7 @@
         
         If folder.self.path <> "" Then
             musicTarget = "Playlist"
+            oPlaylist.clear
             document.getElementById("mp3text").innerHTML = folder
             document.getElementById("mp3folderselector").value = folder.self.path
         End If
@@ -278,6 +288,11 @@
         If Window.event.keyCode = Key_plus Then If started = true Then PlusButton_OnClick()
         If Window.event.keyCode = Key_up Then If started = true Then VolumeUpButton_OnClick()
         If Window.event.keyCode = Key_down Then If started = true Then VolumeDownButton_OnClick()
+        If Window.event.keyCode = Key_skip Then If isPressingSkip = false AND musicTarget = "Playlist" Then ToggleSkip()
+    End Sub
+
+    Sub document_OnKeyUp
+        If Window.event.keyCode = Key_skip Then If musicTarget = "Playlist" Then ToggleSkip()
     End Sub
 
     Sub PauseButton_OnClick
@@ -309,7 +324,7 @@
     End Sub
 
     Sub RebindButton_OnClick
-        Dim arr : arr = Window.showModalDialog(".\Data\hta\Rebind.hta", "", "dialogHeight: 228px; dialogWidth: 190px;")
+        Dim arr : arr = Window.showModalDialog(".\Data\hta\Rebind.hta", "", "dialogHeight: 275px; dialogWidth: 200px;")
         If Not arr(0) = "" Then Key_close = arr(0)
         If Not arr(1) = "" Then Key_pause = arr(1)
         If Not arr(2) = "" Then Key_loop = arr(2)
@@ -317,14 +332,23 @@
         If Not arr(4) = "" Then Key_plus = arr(4)
         If Not arr(5) = "" Then Key_up = arr(5)
         If Not arr(6) = "" Then Key_down = arr(6)
+        If Not arr(7) = "" Then Key_skip = arr(7)
     End Sub
 
     Sub MinusButton_OnClick
-        oPlayer.controls.currentPosition = oPlayer.controls.currentPosition - 5
+        If isPressingSkip = true Then
+            oPlayer.controls.next
+        Else
+            oPlayer.controls.currentPosition = oPlayer.controls.currentPosition - 5
+        End If
     End Sub
 
     Sub PlusButton_OnClick
-        oPlayer.controls.currentPosition = oPlayer.controls.currentPosition + 5
+        If isPressingSkip = true Then
+            oPlayer.controls.previous
+        Else
+            oPlayer.controls.currentPosition = oPlayer.controls.currentPosition + 5
+        End If
     End Sub
 
     Sub VolumeDownButton_OnClick
@@ -367,9 +391,20 @@
         isLooping = Bool
     End Sub
 
+    Sub ToggleSkip
+        isPressingSkip = NOT isPressingSkip
+        If isPressingSkip = true Then
+            document.getElementById("-TimeIcon").src = StateMinusSkip
+            document.getElementById("+TimeIcon").src = StatePlusSkip
+        End If
+        If isPressingSkip = false Then
+            document.getElementById("-TimeIcon").src = StateMinusNoSkip
+            document.getElementById("+TimeIcon").src = StatePlusNoSkip
+        End If
+    End Sub
 </script>
 
-<body>
+<body onselectstart="return false" >
     <!-- First Layer -->
     <div class="FirstLayer">
         <button type="button" id="RebindButton" name="RebindButton" onclick="focus(Window)" tabindex="-1"></button>
@@ -379,29 +414,29 @@
     <div class="SecondLayer">
         <span id="mp3text" class="mp3text">Choose a song</span>
         <label id="mp3wrapper" class="mp3wrapper">
-            <img id="SongIcon" src=".\Data/png/Song.png" /></button>
+            <img id="SongIcon" src=".\Data/png/SongIcon.png" /></button>
             <input type="file" class="mp3selector" id="mp3Selector" name="mp3Selector" value="" onclick="focus(Window)" tabindex="-1">
         </label>
         <a id="mp3folderselector" class="mp3folderselector" value="">
-            <img id="PlaylistIcon" src=".\Data/png/Playlist.png" /></button>
+            <img id="PlaylistIcon" src=".\Data/png/PlaylistIcon.png" /></button>
         </a>
     </div>
 
     <!-- Third Layer -->
     <div class="ThirdLayer">
-        <button type="button" id="MinusButton" style="margin-left: 8px" name="MinusButton" onclick="focus(Window)" tabindex="-1">
-            <img id="-TimeIcon" src=".\Data/png/-TimeIcon.png" /></button>
-        <button type="button" id="PauseButton" name="PauseButton" onclick="focus(Window)" tabindex="-1">
-            <img id="PauseImg" src=".\Data/png/PlayIcon.png" /></button>
-        <button type="button" id="PlusButton" style="margin-right: 45px;" name="PlusButton" onclick="focus(Window)" tabindex="-1">
-            <img id="+TimeIcon" src=".\Data/png/+TimeIcon.png" /></button>
+        <a type="button" id="MinusButton" style="margin-left: 8px" name="MinusButton" onclick="focus(Window)" tabindex="-1">
+            <img id="-TimeIcon" src=".\Data/png/-TimeIcon.png" onmousedown="return false" /></a>
+        <a type="button" id="PauseButton" name="PauseButton" onclick="focus(Window)" tabindex="-1">
+            <img id="PauseImg" src=".\Data/png/PlayIcon.png" onmousedown="return false" /></a>
+        <a type="button" id="PlusButton" style="margin-right: 45px;" name="PlusButton" onclick="focus(Window)" tabindex="-1">
+            <img id="+TimeIcon" src=".\Data/png/+TimeIcon.png" onmousedown="return false" /></a>
 
-        <button type="button" id="VolumeDownButton" name="VolumeDownButton" onclick="focus(Window)" tabindex="-1">
-            <img id="DownImg" src=".\Data/png/-VolumeIcon.png" /></button>
-        <button type="button" id="VolumeUpButton" style="margin-right: 45px;" name="VolumeUpButton" onclick="focus(Window)" tabindex="-1">
-            <img id="UpImg" src=".\Data/png/+VolumeIcon.png" /></button>
+        <a type="button" id="VolumeDownButton" name="VolumeDownButton" onclick="focus(Window)" tabindex="-1">
+            <img id="DownImg" src=".\Data/png/-VolumeIcon.png" onmousedown="return false" /></a>
+        <a type="button" id="VolumeUpButton" style="margin-right: 45px;" name="VolumeUpButton" onclick="focus(Window)" tabindex="-1">
+            <img id="UpImg" src=".\Data/png/+VolumeIcon.png" onmousedown="return false" /></a>
 
-        <button type="button" id="LoopButton" name="LoopButton" onclick="focus(Window)" tabindex="-1">
-            <img id="LoopImg" src=".\Data/png/NoLoopIcon.png" /></button>
+        <a type="button" id="LoopButton" name="LoopButton" onclick="focus(Window)" tabindex="-1">
+            <img id="LoopImg" src=".\Data/png/NoLoopIcon.png" onmousedown="return false" /></a>
     </div>
 </body>

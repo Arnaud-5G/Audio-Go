@@ -10,6 +10,7 @@ body {
 
 .FirstLayer {
     background-color: #ddd;
+    cursor: default;
 }
 
 .FirstLayer button {
@@ -32,6 +33,7 @@ body {
 .SecondLayer {
     margin-top: 5px;
     background-color: #ddd;
+    cursor: default;
 }
 
 .mp3wrapper {
@@ -88,15 +90,17 @@ body {
     border-radius: 3px;
     text-align: center;
     color: #000;
+    cursor: default;
 }
 
 .ThirdLayer {
     margin-top: 50px;
     height: 100vh;
     background-color: #ddd;
+    cursor: default;
 }
 
-.ThirdLayer button {
+.ThirdLayer a {
     background-color: #ddd;
     outline: none;
     border: none;
