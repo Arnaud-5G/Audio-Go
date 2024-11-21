@@ -9,6 +9,9 @@
 </head>
 
 <script language="VBScript">
+    ' Resize the window
+    Window.ResizeTo 392, 190 ' false x, true y
+
     ' Create the needed objects
     Dim Shell : Set Shell = CreateObject("Shell.Application")
     ' if the dat files are missing replace them
@@ -18,9 +21,6 @@
         Set File = FSO.CreateTextFile(".\Data\dat\Bindings.dat", 2)
         File.Write "close 27" & vbCrLf & "pause 32" & vbCrLf & "loop 82" & vbCrLf & "minus 37" & vbCrLf & "plus 39" & vbCrLf & "up 38" & vbCrLf & "down 40" & vbCrLf & "skip 17"
     End If
-
-    ' Resize the window
-    Window.ResizeTo 392, 190 ' false x, true y
 
     'Create the Audio Player Object
     Dim oPlayer: Set oPlayer = CreateObject("WMPlayer.OCX")
@@ -273,12 +273,6 @@
         End If
     End Sub
 
-    Sub TogglePause
-        If isPlaying = false Then If pressedSpace = false Then Play()
-        If isPlaying = true Then If pressedSpace = false Then Pause()
-        pressedSpace = false
-    End Sub
-
     ' Called each time a key is pressed
     Sub document_OnKeyDown
         If Window.event.keyCode = Key_close Then Window.close()
@@ -293,6 +287,12 @@
 
     Sub document_OnKeyUp
         If Window.event.keyCode = Key_skip Then If musicTarget = "Playlist" Then ToggleSkip()
+    End Sub
+
+    Sub TogglePause
+        If isPlaying = false Then If pressedSpace = false Then Play()
+        If isPlaying = true Then If pressedSpace = false Then Pause()
+        pressedSpace = false
     End Sub
 
     Sub PauseButton_OnClick
