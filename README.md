@@ -59,7 +59,7 @@
 
 ## Screenshots
 
-![Audio Go Screenshot](.\ReadmeImage.png)
+![Audio Go Screenshot](ReadmeImage.png)
 
 ---
 
