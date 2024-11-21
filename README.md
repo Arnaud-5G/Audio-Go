@@ -26,7 +26,7 @@
    Clone or download the repository to your local machine:
    
    ```bash
-   git clone https://github.com/yourusername/Audio-Go.git
+   git clone https://github.com/Arnaud-5G/Audio-Go.git
    ```
 
 2. **Open the HTA File**:  
