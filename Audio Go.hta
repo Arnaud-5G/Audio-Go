@@ -37,7 +37,6 @@
     hasLoaded = false
     hasScrollbar = false
     hasChangedScrollbarPadding = false
-    hasChangedSong = false
     started = false
     isPlaying = false
     musicTarget = "" ' "Song" or "Playlist"
@@ -105,8 +104,10 @@
 
     Function WMPlayer_CurrentItemChange(change) ' change is nothing
         If started = true Then
+            ' clear text
             document.getElementById("mp3text").innerHTML = ""
 
+            ' add the song text
             document.getElementById("mp3text").innerHTML = playlistName & " | " & oPlayer.currentmedia.name
         End If
     End Function
@@ -249,7 +250,6 @@
         oPlaylist.clear
         oSongArray = Array()
         musicTarget = "Song"
-        hasChangedSong = false
         If isPressingSkip = true then ToggleSkip()
     End Sub
 
@@ -291,7 +291,6 @@
             musicTarget = "Playlist"
             oPlaylist.clear
             oSongArray = Array()
-            hasChangedSong = false
             document.getElementById("mp3text").innerHTML = folder
             document.getElementById("mp3folderselector").value = folder.self.path
         End If
