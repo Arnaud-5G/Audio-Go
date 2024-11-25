@@ -8,6 +8,13 @@ body {
     background-color: #ddd;
 }
 
+.WMP {
+    width: 0;
+    height: 0;
+    position: absolute;
+    top: -100px;
+}
+
 .FirstLayer {
     background-color: #ddd;
     cursor: default;

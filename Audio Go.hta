@@ -8,6 +8,10 @@
         SCROLL="No" SHOWINTASKBAR="Yes" SINGLEINSTANCE="Yes" SYSMENU="Yes" WINDOWSTATE="Normal" MaximizeButton="No">
 </head>
 
+<object class="WMP" id="WMPlayer"
+        classid="clsid:6BF52A52-394A-11D3-B153-00C04F79FAA6">
+</object>
+
 <script language="VBScript">
     ' Resize the window
     Window.ResizeTo 392, 190 ' false x, true y
@@ -23,13 +27,17 @@
     End If
 
     'Create the Audio Player Object
-    Dim oPlayer: Set oPlayer = CreateObject("WMPlayer.OCX")
-    Set oPlaylist = oPlayer.newPlaylist("myplaylist", "")
+    ' Dim oPlayer: Set oPlayer = CreateObject("WMPlayer.OCX")
+    Dim oPlayer : Set oPlayer = document.getElementById("WMPlayer")
+    Dim oPlaylist : Set oPlaylist = oPlayer.newPlaylist("AudioGoPlaylist", "")
+    Dim oSongArray : oSongArray = Array()
+    playlistName = ""
 
     ' Create the vars
     hasLoaded = false
     hasScrollbar = false
     hasChangedScrollbarPadding = false
+    hasChangedSong = false
     started = false
     isPlaying = false
     musicTarget = "" ' "Song" or "Playlist"
@@ -94,6 +102,14 @@
             End If
         End If
     End Sub
+
+    Function WMPlayer_CurrentItemChange(change) ' change is nothing
+        If started = true Then
+            document.getElementById("mp3text").innerHTML = ""
+
+            document.getElementById("mp3text").innerHTML = playlistName & " | " & oPlayer.currentmedia.name
+        End If
+    End Function
 
     ' to read in memory
     Function Read(Path, Var)
@@ -211,6 +227,8 @@
             Ext = Array("mp3", "mp4", "mid", "midi", "wav", "wma", "m4a", "flac", "aac", "ogg", "oga", "webm", "weba", "opus", "3gp", "3g2", "amr", "aiff", "aif", "aifc", "mka", "mkv")
             For each filetype in Ext
                 If LCase(fso.GetExtensionName(file.name)) = LCase(filetype) Then 
+                    REDIM PRESERVE oSongArray(UBound(oSongArray) + 1)
+                    oSongArray(UBound(oSongArray)) = file.name
                     Set media = oPlayer.newMedia(file.Path)
                     oPlaylist.appendItem(media)
                 end if
@@ -229,7 +247,9 @@
     Sub mp3Selector_OnChange
         document.getElementById("mp3text").innerHTML = Split(document.getElementById("mp3Selector").value, "\")(UBound(Split(document.getElementById("mp3Selector").value, "\")))
         oPlaylist.clear
+        oSongArray = Array()
         musicTarget = "Song"
+        hasChangedSong = false
         If isPressingSkip = true then ToggleSkip()
     End Sub
 
@@ -266,8 +286,12 @@
         Dim folder : Set folder = Shell.BrowseForFolder(0, "Choose a folder", &H4410, 0)
         
         If folder.self.path <> "" Then
+            playlistName = folder
+
             musicTarget = "Playlist"
             oPlaylist.clear
+            oSongArray = Array()
+            hasChangedSong = false
             document.getElementById("mp3text").innerHTML = folder
             document.getElementById("mp3folderselector").value = folder.self.path
         End If
@@ -337,7 +361,7 @@
 
     Sub MinusButton_OnClick
         If isPressingSkip = true Then
-            oPlayer.controls.next
+            oPlayer.controls.previous
         Else
             oPlayer.controls.currentPosition = oPlayer.controls.currentPosition - 5
         End If
@@ -345,7 +369,7 @@
 
     Sub PlusButton_OnClick
         If isPressingSkip = true Then
-            oPlayer.controls.previous
+            oPlayer.controls.next
         Else
             oPlayer.controls.currentPosition = oPlayer.controls.currentPosition + 5
         End If
